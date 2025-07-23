@@ -75,7 +75,8 @@ const EventDetailPage = () => {
           </p>
         </div>
 
-        <p className="text-gray-300 mb-6">{event.description}</p>
+        <p className="text-gray-300 mb-6 capitalize">Organizer : {event.organizer}</p>
+        <p className="text-gray-300 mb-6 capitalize">Specials Host  : {event.special_guest}</p>
 
         <button className="bg-yellow-400 text-black px-6 py-2 rounded-md font-semibold hover:bg-yellow-500 transition">
           Buy Tickets

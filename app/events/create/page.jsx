@@ -3,10 +3,10 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
 function CreateEventForm() {
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     title: "",
     description: "",
     category: "",
@@ -19,7 +19,9 @@ function CreateEventForm() {
     specialGuest: "",
     tags: "",
     image: null,
-  });
+  };
+
+  const [formData, setFormData] = useState(initialFormData);
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -31,35 +33,57 @@ function CreateEventForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem('access');
+    const requiredFields = [
+      "title", "description", "category", "maxAttendees", "date",
+      "time", "duration", "location", "price", "specialGuest"
+    ];
+    
+    for (const field of requiredFields) {
+      if (!formData[field]) {
+        toast.error(`${field} is required`);
+        return;
+      }
+    }
+    
+    if (!formData.image) {
+      toast.error("Image is required");
+      return;
+    }
+
+    const token = localStorage.getItem("access");
     if (!token) {
       toast.error("You must be logged in to create an event");
       return;
     }
 
     const data = new FormData();
-    data.append('title', formData.title);
-    data.append('description', formData.description);
-    data.append('category', formData.category);
-    data.append('max_attendees', formData.maxAttendees);
-    data.append('date', formData.date);
-    data.append('time', formData.time);
-    data.append('duration', formData.duration);
-    data.append('location', formData.location);
-    data.append('price', formData.price);
-    data.append('special_guest', formData.specialGuest);
-    if (formData.image) data.append('image', formData.image);
+    data.append("title", formData.title);
+    data.append("description", formData.description);
+    data.append("category", formData.category);
+    data.append("max_attendees", formData.maxAttendees);
+    data.append("date", formData.date);
+    data.append("time", formData.time);
+    data.append("duration", formData.duration);
+    data.append("location", formData.location);
+    data.append("price", formData.price);
+    data.append("special_guest", formData.specialGuest);
+    if (formData.image) data.append("image", formData.image);
 
     try {
-      const res = await axios.post("http://localhost:8000/events/create/", data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const res = await axios.post(
+        "http://localhost:8000/events/create/",
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       toast.success("Event created successfully!");
       console.log("Event created:", res.data);
+      setFormData(initialFormData);
     } catch (err) {
       console.error("Error creating event:", err.response?.data || err.message);
       toast.error("Failed to create event. Check all fields and try again.");
@@ -76,8 +100,12 @@ function CreateEventForm() {
         <div className="wrapper">
           {/* Basic Information */}
           <div className="bg-[#1a2a3a] rounded-xl p-8 shadow-lg mb-4">
-            <h2 className="text-2xl font-bold mb-1 text-purple-400">📌 Basic Information</h2>
-            <p className="text-sm text-gray-300 mb-6">Let’s start with the essential details about your event</p>
+            <h2 className="text-2xl font-bold mb-1 text-white">
+              📌 Basic Information
+            </h2>
+            <p className="text-sm text-gray-300 mb-6">
+              Let’s start with the essential details about your event
+            </p>
 
             <div className="space-y-4">
               <input
@@ -86,7 +114,7 @@ function CreateEventForm() {
                 value={formData.title}
                 onChange={handleChange}
                 placeholder="Enter your event title..."
-                required
+
                 className="w-full p-3 rounded-lg bg-[#0f1b2a] border border-gray-600 text-white placeholder-gray-400 focus:border-yellow-400 focus:outline-none"
               />
               <textarea
@@ -95,7 +123,7 @@ function CreateEventForm() {
                 value={formData.description}
                 onChange={handleChange}
                 placeholder="Describe your event..."
-                required
+
                 className="w-full p-3 rounded-lg bg-[#0f1b2a] border border-gray-600 text-white placeholder-gray-400 resize-none focus:border-yellow-400 focus:outline-none"
               />
               <div className="flex gap-4">
@@ -104,7 +132,7 @@ function CreateEventForm() {
                   value={formData.category}
                   onChange={handleChange}
                   placeholder="Enter Category"
-                  required
+  
                   className="w-1/2 p-3 rounded-lg bg-[#0f1b2a] border border-gray-600 text-white focus:border-yellow-400 focus:outline-none"
                 />
                 <input
@@ -113,7 +141,7 @@ function CreateEventForm() {
                   value={formData.maxAttendees}
                   onChange={handleChange}
                   placeholder="Maximum number of attendees"
-                  required
+  
                   className="w-1/2 p-3 rounded-lg bg-[#0f1b2a] border border-gray-600 text-white placeholder-gray-400 focus:border-yellow-400 focus:outline-none"
                 />
               </div>
@@ -122,8 +150,12 @@ function CreateEventForm() {
 
           {/* Date, Time & Location */}
           <div className="bg-[#1a2a3a] rounded-xl p-8 shadow-lg mb-4">
-            <h2 className="text-2xl font-bold mb-1 text-purple-400">📅 Date, Time & Location</h2>
-            <p className="text-sm text-gray-300 mb-6">When and where will your event take place?</p>
+            <h2 className="text-2xl font-bold mb-1 text-white">
+              📅 Date, Time & Location
+            </h2>
+            <p className="text-sm text-gray-300 mb-6">
+              When and where will your event take place?
+            </p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <input
@@ -131,7 +163,7 @@ function CreateEventForm() {
                 name="date"
                 value={formData.date}
                 onChange={handleChange}
-                required
+
                 className="w-full p-3 rounded-lg bg-[#0f1b2a] border border-gray-600 text-gray-400 focus:border-yellow-400 focus:outline-none"
               />
               <input
@@ -139,7 +171,7 @@ function CreateEventForm() {
                 name="time"
                 value={formData.time}
                 onChange={handleChange}
-                required
+
                 className="w-full p-3 rounded-lg bg-[#0f1b2a] border border-gray-600 text-gray-400 focus:border-yellow-400 focus:outline-none"
               />
               <input
@@ -148,7 +180,7 @@ function CreateEventForm() {
                 placeholder="Duration in hour"
                 value={formData.duration}
                 onChange={handleChange}
-                required
+
                 className="w-full p-3 rounded-lg bg-[#0f1b2a] border border-gray-600 text-white focus:border-yellow-400 focus:outline-none"
               />
             </div>
@@ -158,7 +190,7 @@ function CreateEventForm() {
               name="location"
               value={formData.location}
               onChange={handleChange}
-              required
+
               placeholder="Enter venue address or online platform..."
               className="w-full p-3 rounded-lg bg-[#0f1b2a] border border-gray-600 text-white placeholder-gray-400 mt-4 focus:border-yellow-400 focus:outline-none"
             />
@@ -166,8 +198,12 @@ function CreateEventForm() {
 
           {/* Media & Details */}
           <div className="bg-[#1a2a3a] rounded-xl p-8 shadow-lg mb-4">
-            <h2 className="text-2xl font-bold mb-1 text-purple-400">🖼️ Media & Details</h2>
-            <p className="text-sm text-gray-300 mb-6">Add visual appeal and additional information</p>
+            <h2 className="text-2xl font-bold mb-1 text-white">
+              🖼️ Media & Details
+            </h2>
+            <p className="text-sm text-gray-300 mb-6">
+              Add visual appeal and additional information
+            </p>
 
             <div className="bg-[#0f1b2a] border-2 border-dashed border-gray-500 rounded-lg p-6 text-center relative">
               <input
@@ -183,6 +219,12 @@ function CreateEventForm() {
               <p className="text-xs text-gray-500 mt-1 pointer-events-none">
                 PNG, JPG up to 10MB
               </p>
+              {formData.image && (
+                <p className="mt-3 text-sm text-gray-300">
+                  Selected image:{" "}
+                  <span className="text-yellow-300">{formData.image.name}</span>
+                </p>
+              )}
             </div>
 
             <div className="flex md:grid-cols-2 gap-4 mt-6">
@@ -191,8 +233,8 @@ function CreateEventForm() {
                 name="price"
                 value={formData.price}
                 onChange={handleChange}
-                required
-                placeholder="0.00 (leave empty for free)"
+
+                placeholder="Enter ticket price"
                 className="w-full p-3 rounded-lg bg-[#0f1b2a] border border-gray-600 text-white placeholder-gray-400 focus:border-yellow-400 focus:outline-none"
               />
               <input
@@ -200,7 +242,7 @@ function CreateEventForm() {
                 name="specialGuest"
                 value={formData.specialGuest}
                 onChange={handleChange}
-                required
+
                 placeholder="Do you have any special guest?"
                 className="w-full p-3 rounded-lg bg-[#0f1b2a] border border-gray-600 text-white placeholder-gray-400 focus:border-yellow-400 focus:outline-none"
               />

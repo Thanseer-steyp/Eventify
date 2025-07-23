@@ -25,14 +25,14 @@ const EventPage = () => {
   const today = new Date();
 
   // First day of the current month
-  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const startDate = new Date();
 
   // Last day of the current month
   const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
   const [dateRange, setDateRange] = useState([
     {
-      startDate: startOfMonth,
+      startDate: startDate,
       endDate: endOfMonth,
       key: "selection",
     },
@@ -267,7 +267,8 @@ const EventPage = () => {
               />
             </div>
 
-            <div className="space-y-4">
+            <div className="grid grid-cols-3 gap-5">
+
               {filteredEvents
                 .filter((event) =>
                   event.title.toLowerCase().includes(search.toLowerCase())
@@ -285,7 +286,7 @@ const EventPage = () => {
                 .map((event, index) => (
                   <div
                     key={index}
-                    className="bg-[#1a2a3a] flex p-4 h-[150px] rounded-lg hover:bg-[#24344e] transition-transform duration-300 transform hover:-translate-x-2 "
+                    className="bg-[#1a2a3a] flex p-4 flex-col gap-4 rounded-lg hover:bg-[#24344e] transition-transform duration-300 transform hover:-translate-y-1 "
                   >
                     <Image
                       src={
@@ -295,13 +296,15 @@ const EventPage = () => {
                           : event.image
                       }
                       alt={event.title}
-                      className="w-1/5 rounded-md block mr-4"
-                      width={150}
-                      height={100}
+                      className="w-full rounded-md block h-[150px]"
+                      width={200}
+                      height={200}
                     />
 
-                    <div className="h-full flex flex-col justify-between">
-                      <h3 className="text-xl font-semibold">{event.title}</h3>
+                    <div className="flex flex-col gap-2">
+                      <h3 className="text-2xl font-semibold">
+                        {event.title}
+                      </h3>
                       <p className="text-md text-gray-300 flex items-center w-max">
                         <Image
                           src={Location}
@@ -334,7 +337,7 @@ const EventPage = () => {
                             "December",
                           ];
                           const monthName = monthNames[parseInt(mm, 10) - 1];
-                          return `${dd} ${monthName} ${yyyy}`;
+                          return `${dd} ${monthName.slice(0, 3)} ${yyyy}`;
                         })()}
                       </p>
 
@@ -348,8 +351,8 @@ const EventPage = () => {
                         ₹{Math.floor(event.price)}
                       </p>
                     </div>
-                    <div className="text-lg ml-auto flex flex-col justify-between h-full">
-                      <p className="flex items-center justify-end text-2xl">
+                    <div className="text-lg flex flex-col justify-between h-full">
+                      {/* <p className="flex items-center justify-end text-2xl">
                         {(() => {
                           if (!event.date) return "Date";
                           const [yyyy, mm, dd] = event.date.split("-");
@@ -376,14 +379,15 @@ const EventPage = () => {
                           alt="arrow"
                           className="w-2 block ml-3"
                         />
-                      </p>
+                      </p> */}
 
                       <Link
                         href={`/events/${event.id}`}
-                        className="bg-yellow-400 text-black px-6 py-2 rounded-md font-semibold hover:bg-yellow-500 transition"
+                        className="bg-yellow-400 w-full text-black px-6 py-2 rounded-md text-center font-semibold hover:bg-yellow-500 transition"
                       >
                         Buy Tickets
                       </Link>
+
                     </div>
                   </div>
                 ))}
