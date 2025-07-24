@@ -1,6 +1,9 @@
 from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
+
 
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -8,8 +11,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import RetrieveAPIView
 from rest_framework import status
 
-from .serializers import SignupSerializer, LoginSerializer, EventSerializer
-from .models import Event
+from .serializers import SignupSerializer, LoginSerializer, EventSerializer, TicketSerializer
+from .serializers import UserBookingSerializer
+from .models import Event,Ticket
 
 
 class SignupView(APIView):
@@ -78,3 +82,49 @@ class EventListView(APIView):
 class EventDetailView(RetrieveAPIView):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
+
+
+
+
+
+
+
+class BookTicketView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        event_id = request.data.get("event")
+        quantity = request.data.get("quantity")
+
+        try:
+            event = Event.objects.get(pk=event_id)
+        except Event.DoesNotExist:
+            return Response({"error": "Event not found"}, status=404)
+
+        ticket = Ticket.objects.create(user=request.user, event=event, quantity=quantity)
+        serializer = TicketSerializer(ticket)
+        return Response(serializer.data, status=201)
+
+
+class UserTicketsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        tickets = Ticket.objects.filter(user=request.user).order_by("-booked_at")
+        serializer = TicketSerializer(tickets, many=True)
+        return Response(serializer.data)
+
+
+
+
+
+
+
+
+class AllUserBookingsView(APIView):
+    permission_classes = [IsAuthenticated]  # You can also use IsAdminUser
+
+    def get(self, request):
+        users = User.objects.prefetch_related('tickets__event').all()
+        serializer = UserBookingSerializer(users, many=True)
+        return Response(serializer.data)

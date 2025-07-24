@@ -1,9 +1,12 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import Event
+from .models import Event, Ticket
+
+
 User = get_user_model()
 
 class SignupSerializer(serializers.ModelSerializer):
@@ -32,3 +35,39 @@ class EventSerializer(serializers.ModelSerializer):
             'date', 'time', 'duration', 'location', 'price',
             'special_guest', 'image', 'created_at', 'organizer'
         ]
+
+
+
+
+
+
+class TicketSerializer(serializers.ModelSerializer):
+    event_title = serializers.CharField(source='event.title', read_only=True)
+    event_date = serializers.DateField(source='event.date', read_only=True)
+
+    class Meta:
+        model = Ticket
+        fields = ['id', 'event_title', 'event_date', 'quantity', 'booked_at']
+
+
+
+
+
+
+
+
+
+
+class BookingSerializer(serializers.ModelSerializer):
+    event_title = serializers.CharField(source="event.title", read_only=True)
+
+    class Meta:
+        model = Ticket
+        fields = ['event_title', 'quantity', 'created_at']
+
+class UserBookingSerializer(serializers.ModelSerializer):
+    tickets = TicketSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'tickets']
