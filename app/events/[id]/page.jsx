@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion } from "framer-motion";
+import axios from "axios";
 
 import Wallet from "../../../components/assets/wallet.svg";
 import Location from "../../../components/assets/location.svg";
@@ -313,32 +314,32 @@ const EventDetailPage = () => {
                   }
 
                   try {
-                    const res = await fetch(
+                    const res = await axios.post(
                       "http://localhost:8000/tickets/book/",
                       {
-                        method: "POST",
+                        event: id,
+                        quantity: quantity,
+                      },
+                      {
                         headers: {
                           "Content-Type": "application/json",
                           Authorization: `Bearer ${localStorage.getItem(
                             "access"
                           )}`,
                         },
-                        body: JSON.stringify({
-                          event: id,
-                          quantity: quantity,
-                        }),
                       }
                     );
 
-                    if (!res.ok) throw new Error("Booking failed");
-
-                    const data = await res.json(); // assuming ticket data is returned
+                    const data = res.data; // Axios auto-parses JSON
                     setTicketInfo(data);
                     toast.success(`Payment Successful for ${quantity} tickets`);
                     toast.success(`Tickets booked successfully`);
                     closeModal();
                   } catch (error) {
-                    console.error("Booking Error:", error);
+                    console.error(
+                      "Booking Error:",
+                      error.response?.data || error.message
+                    );
                     toast.error("Failed to book tickets. Please try again.");
                   }
                 }}
@@ -351,39 +352,69 @@ const EventDetailPage = () => {
         </div>
       )}
       {showTicketModal && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-60">
-    <motion.div
-      initial={{ scale: 0 }}
-      animate={{ scale: 1 }}
-      exit={{ scale: 0 }}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className="bg-[#1a2942] border border-white p-6 rounded-xl w-[90%] max-w-md shadow-2xl text-white"
-    >
-      <h2 className="text-2xl font-semibold mb-4">Your Ticket</h2>
-      <div className="space-y-3">
-        <p><span className="font-medium text-yellow-400">Event:</span> {event.title}</p>
-        <p><span className="font-medium text-yellow-400">Event Location:</span> {event.location}</p>
-        <p><span className="font-medium text-yellow-400">Booked Date:</span> {new Date(event.date).toLocaleDateString()}</p>
-        <p><span className="font-medium text-yellow-400">Booked Time:</span> {event.displayTime}</p>
-        <p><span className="font-medium text-yellow-400">Ticket Quantity:</span> {ticketInfo.quantity}</p>
-        <p><span className="font-medium text-yellow-400">Total Paid:</span> ₹{event.price * ticketInfo.quantity}</p>
-        {ticketInfo.ticket_id && (
-          <p><span className="font-medium text-yellow-400">Ticket ID:</span> #{ticketInfo.ticket_id}</p>
-        )}
-      </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-60">
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            className="bg-[#1a2942] border border-white p-6 rounded-xl w-[90%] max-w-md shadow-2xl text-white"
+          >
+            <h2 className="text-2xl font-semibold mb-4">Your Ticket</h2>
+            <div className="space-y-3">
+              {ticketInfo.id && (
+                <p>
+                  <span className="font-medium text-yellow-400">
+                    Ticket ID:
+                  </span>{" "}
+                  #{ticketInfo.id}
+                </p>
+              )}
+              <p>
+                <span className="font-medium text-yellow-400">Event:</span>{" "}
+                {event.title}
+              </p>
+              <p>
+                <span className="font-medium text-yellow-400">
+                  Event Location:
+                </span>{" "}
+                {event.location}
+              </p>
+              <p>
+                <span className="font-medium text-yellow-400">
+                  Booked Date:
+                </span>{" "}
+                {new Date(event.date).toLocaleDateString()}
+              </p>
+              <p>
+                <span className="font-medium text-yellow-400">
+                  Booked Time:
+                </span>{" "}
+                {event.displayTime}
+              </p>
+              <p>
+                <span className="font-medium text-yellow-400">
+                  Ticket Quantity:
+                </span>{" "}
+                {ticketInfo.quantity}
+              </p>
+              <p>
+                <span className="font-medium text-yellow-400">Total Paid:</span>{" "}
+                ₹{event.price * ticketInfo.quantity}
+              </p>
+            </div>
 
-      <div className="mt-6 flex justify-end">
-        <button
-          onClick={() => setShowTicketModal(false)}
-          className="text-gray-300 hover:text-white border border-gray-500 px-4 py-2 rounded-md"
-        >
-          Close
-        </button>
-      </div>
-    </motion.div>
-  </div>
-)}
-
+            <div className="mt-6 flex justify-end">
+              <button
+                onClick={() => setShowTicketModal(false)}
+                className="text-gray-300 hover:text-white border border-gray-500 px-4 py-2 rounded-md"
+              >
+                Close
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
 
       <ToastContainer position="top-right" autoClose={3000} />
     </div>
