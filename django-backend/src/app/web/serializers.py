@@ -25,8 +25,9 @@ class LoginSerializer(serializers.Serializer):
 
 
 
+
 class EventSerializer(serializers.ModelSerializer):
-    organizer = serializers.CharField(source='user.username', read_only=True)
+    organizer = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
@@ -36,7 +37,9 @@ class EventSerializer(serializers.ModelSerializer):
             'special_guest', 'image', 'created_at', 'organizer'
         ]
 
-
+    def get_organizer(self, obj):
+        name = obj.user.first_name or obj.user.username
+        return name.capitalize()
 
 
 
@@ -49,6 +52,11 @@ class TicketSerializer(serializers.ModelSerializer):
         model = Ticket
         fields = ['id', 'event_title', 'event_date', 'quantity', 'booked_at']
 
+
+
+class UserTicketsWrapperSerializer(serializers.Serializer):
+    first_name = serializers.CharField()
+    bookings = TicketSerializer(many=True)
 
 
 

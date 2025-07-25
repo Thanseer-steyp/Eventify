@@ -14,9 +14,9 @@ function Header() {
     const firstName = localStorage.getItem("first_name");
     const isSuperUser = localStorage.getItem("is_superuser");
     const token = localStorage.getItem("access");
-  
+
     let initial = "";
-  
+
     if (firstName && firstName.trim() !== "") {
       initial = firstName.charAt(0).toUpperCase();
     } else if (isSuperUser === "true") {
@@ -24,11 +24,10 @@ function Header() {
     } else {
       initial = "A"; // fallback
     }
-  
+
     setUserInitial(initial);
     setIsAuthenticated(!!token);
   };
-  
 
   const handleLogout = () => {
     localStorage.clear();
@@ -101,7 +100,10 @@ function Header() {
               </Link>
             </li>
             {isAuthenticated && (
-              <li onClick={handleLogout} className="text-white cursor-pointer hover:text-red-500">
+              <li
+                onClick={handleLogout}
+                className="text-white cursor-pointer hover:text-red-500"
+              >
                 Logout
               </li>
             )}
@@ -121,9 +123,11 @@ function Header() {
 
             {/* Avatar */}
             {isAuthenticated ? (
-              <div className="w-10 h-10 bg-gray-600 text-xl text-white font-bold rounded-full flex items-center justify-center">
-                {userInitial}
-              </div>
+              <Link href="/dashboard">
+                <div className="w-10 h-10 bg-gray-600 text-xl text-white font-bold rounded-full flex items-center justify-center cursor-pointer">
+                  {userInitial}
+                </div>
+              </Link>
             ) : (
               <Link href="/authentication">
                 <div className="w-10 h-10 bg-gray-400 rounded-full flex items-center justify-center cursor-pointer">

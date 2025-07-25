@@ -68,7 +68,7 @@ function Authentication() {
   };
 
   return (
-    <div className="w-screen h-screen flex items-center justify-center bg-[#131d30]">
+    <div className="h-screen flex items-center justify-center bg-[#131d30]">
       <div className="w-[430px] h-max bg-[#081522] text-white p-6 rounded-xl shadow-lg">
         <div className="flex mb-6 bg-[#142435] rounded-lg p-1">
           <button

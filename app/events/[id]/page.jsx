@@ -91,16 +91,14 @@ const EventDetailPage = () => {
   }, [id]);
 
   useEffect(() => {
-    if (showModal) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
+    const shouldDisableScroll = showModal || showTicketModal;
+
+    document.body.style.overflow = shouldDisableScroll ? "hidden" : "auto";
 
     return () => {
-      document.body.style.overflow = "auto"; // cleanup when unmounts
+      document.body.style.overflow = "auto";
     };
-  }, [showModal]);
+  }, [showModal, showTicketModal]);
 
   if (!event) {
     return (
@@ -115,13 +113,15 @@ const EventDetailPage = () => {
   return (
     <div className="bg-[#0B1C2D] text-white min-h-screen p-8 relative">
       <div className="max-w-4xl mx-auto bg-[#1a2942] rounded-xl overflow-hidden shadow-lg p-6">
-        <Image
-          src={event.image}
-          alt={event.title}
-          width={800}
-          height={300}
-          className="rounded-lg mb-6 w-full h-[300px] object-cover"
-        />
+        <div className="h-[350px] mb-4">
+          <Image
+            src={event.image}
+            alt={event.title}
+            width={350}
+            height={350}
+            className="rounded-lg mb-6 w-full h-full block"
+          />
+        </div>
 
         <h1 className="text-4xl font-bold mb-4">{event.title}</h1>
 
@@ -365,7 +365,7 @@ const EventDetailPage = () => {
               {ticketInfo.id && (
                 <p>
                   <span className="font-medium text-yellow-400">
-                    Ticket ID:
+                    Booking ID:
                   </span>{" "}
                   #{ticketInfo.id}
                 </p>

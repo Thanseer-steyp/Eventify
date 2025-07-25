@@ -6,13 +6,14 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import RetrieveAPIView
 from rest_framework import status
 
 from .serializers import SignupSerializer, LoginSerializer, EventSerializer, TicketSerializer
-from .serializers import UserBookingSerializer
+from .serializers import UserBookingSerializer,UserTicketsWrapperSerializer
 from .models import Event,Ticket
 
 
@@ -71,7 +72,7 @@ class CreateEventView(APIView):
 
 
 class EventListView(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [AllowAny]
 
     def get(self, request):
         events = Event.objects.all()
@@ -110,9 +111,18 @@ class UserTicketsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        tickets = Ticket.objects.filter(user=request.user).order_by("-booked_at")
+        user = request.user
+        tickets = Ticket.objects.filter(user=user).order_by("-booked_at")
         serializer = TicketSerializer(tickets, many=True)
-        return Response(serializer.data)
+
+        # Wrap the result
+        wrapper_data = {
+            "first_name": user.first_name,
+            "bookings": serializer.data
+        }
+
+        wrapper_serializer = UserTicketsWrapperSerializer(wrapper_data)
+        return Response(wrapper_serializer.data)
 
 
 
@@ -121,10 +131,26 @@ class UserTicketsView(APIView):
 
 
 
-class AllUserBookingsView(APIView):
-    permission_classes = [IsAuthenticated]  # You can also use IsAdminUser
+class AllUserDataView(APIView):
+    permission_classes = [IsAdminUser]  
 
     def get(self, request):
         users = User.objects.prefetch_related('tickets__event').all()
         serializer = UserBookingSerializer(users, many=True)
+        return Response(serializer.data)
+
+
+
+class UserTicketsWrapperView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        tickets = Ticket.objects.filter(user=user).order_by("-booked_at")
+
+        serializer = UserTicketsWrapperSerializer({
+            "first_name": user.first_name,
+            "bookings": tickets
+        })
+
         return Response(serializer.data)

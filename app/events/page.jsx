@@ -355,8 +355,9 @@ const EventPage = () => {
                 .map((event, index) => (
                   <div
                     key={event.id || index}
-                    className="bg-[#1a2a3a] flex p-4 flex-col gap-4 rounded-lg hover:bg-[#24344e] transition-transform duration-300 transform hover:-translate-y-1"
+                    className="bg-[#1a2a3a] space-y-5 p-4 gap-4 rounded-lg hover:bg-[#24344e] transition-transform duration-300 transform hover:-translate-y-1"
                   >
+                    <div className="w-full block h-[150px]">
                     <Image
                       src={
                         typeof event.image === "string" &&
@@ -365,10 +366,11 @@ const EventPage = () => {
                           : event.image || "/placeholder-image.jpg"
                       }
                       alt={event.title}
-                      className="w-full rounded-md block h-[150px] object-cover"
-                      width={200}
-                      height={200}
+                      className="w-full h-full overflow-hidden rounded-lg"
+                      width={150}
+                      height={150}
                     />
+                    </div>
 
                     <div className="flex flex-col gap-2">
                       <h3 className="text-2xl font-semibold">
