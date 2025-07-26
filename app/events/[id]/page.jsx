@@ -52,6 +52,18 @@ const EventDetailPage = () => {
       toast.error("You must be logged in to buy tickets");
       return;
     }
+
+    if (event.tickets_left === 0) {
+      toast.warning("🚫 No tickets available");
+      return;
+    }
+
+    // Check if default quantity is greater than available tickets
+    if (quantity > event.tickets_left) {
+      toast.warning(`Only ${event.tickets_left} tickets are available`);
+      return;
+    }
+
     setShowModal(true);
     setTimeout(() => setAnimateModal(true), 20);
   };
@@ -157,11 +169,26 @@ const EventDetailPage = () => {
         </div>
 
         {event.description && (
-          <div className="mb-6 bg-[#0f1b2a] p-4 rounded-lg">
+          <div className="bg-[#0f1b2a] p-4 rounded-lg">
             <h2 className="text-2xl font-semibold mb-3">About This Event</h2>
             <p className="text-gray-300 leading-relaxed">{event.description}</p>
           </div>
         )}
+        {/* Tickets Progress Slider */}
+        <div className="flex gap-1 items-center bg-[#0f1b2a] rounded-lg p-2 my-4">
+          <p className="whitespace-nowrap">Tickets: </p>
+          <div className="w-full bg-white bg-opacity-20 rounded-sm h-5 overflow-hidden flex justify-between items-center relative">
+            <div
+              className="h-full bg-yellow-400 text-xs font-semibold text-black text-right p-1 transition-all duration-300 ease-in-out"
+              style={{
+                width: `${(event.tickets_sold / event.max_attendees) * 100}%`,
+              }}
+            ></div>
+            <span className="text-black mr-2 text-[12px] absolute right-0">
+              {event.tickets_left} Left
+            </span>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div className="bg-[#0f1b2a] p-4 rounded-lg">
@@ -313,6 +340,13 @@ const EventDetailPage = () => {
                     return;
                   }
 
+                  if (quantity > event.tickets_left) {
+                    toast.error(
+                      `Only ${event.tickets_left} tickets are available`
+                    );
+                    return;
+                  }
+
                   try {
                     const res = await axios.post(
                       "http://localhost:8000/tickets/book/",
@@ -330,7 +364,7 @@ const EventDetailPage = () => {
                       }
                     );
 
-                    const data = res.data; // Axios auto-parses JSON
+                    const data = res.data;
                     setTicketInfo(data);
                     toast.success(`Payment Successful for ${quantity} tickets`);
                     toast.success(`Tickets booked successfully`);
