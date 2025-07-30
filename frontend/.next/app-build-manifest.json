@@ -12,6 +12,17 @@
       "static/css/app/events/[id]/page.css",
       "static/chunks/app/events/[id]/page.js"
     ],
+    "/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/page.js"
+    ],
+    "/events/create/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/events/create/page.css",
+      "static/chunks/app/events/create/page.js"
+    ],
     "/events/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",

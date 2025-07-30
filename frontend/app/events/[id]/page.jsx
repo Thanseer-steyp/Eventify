@@ -20,6 +20,7 @@ import ticket from "../../../components/assets/ticket.png";
 import seat from "../../../components/assets/seat.png";
 import language from "../../../components/assets/language.png";
 import management from "../../../components/assets/management.png";
+import crowd from "../../../components/assets/crowd.svg";
 
 const EventDetailPage = () => {
   const { id } = useParams();
@@ -179,6 +180,17 @@ const EventDetailPage = () => {
               </li>
               <li className="flex items-center">
                 <Image
+                  src={crowd}
+                  alt="icon"
+                  className="w-[50px] h-[50px] bg-[#f3f3f5] p-3 rounded-lg"
+                />
+                <div className="ml-3">
+                  <p className="text-[#9ea2ac] text-xs">Max attendance</p>
+                  <h6>{event.max_attendees}</h6>
+                </div>
+              </li>
+              <li className="flex items-center">
+                <Image
                   src={ticket}
                   alt="icon"
                   className="w-[50px] h-[50px] bg-[#f3f3f5] p-3 rounded-lg"
@@ -248,37 +260,47 @@ const EventDetailPage = () => {
           <hr className="border border-[#f0f1f2] my-4" />
 
           <div>
-          <h2 className="text-xl font-bold text-black">Gallery</h2>
-          {event.gallery && event.gallery.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4">
-              {/* First image large */}
-              <div className="col-span-2 row-span-2">
-                <img
-                  src={event.gallery[0]}
-                  alt="Event"
-                  className="w-full h-full object-cover rounded-xl"
-                />
-              </div>
+            <h2 className="text-xl font-bold text-black">Gallery</h2>
+            {event.gallery && event.gallery.length > 0 ? (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4">
+                {/* First image large */}
+                <div className="col-span-2 row-span-2">
+                  <img
+                    src={event.gallery[0]}
+                    alt="Event"
+                    className="w-full h-full object-cover rounded-xl"
+                  />
+                </div>
 
-              {/* Render the rest */}
-              {event.gallery.slice(1).map((img, index) => (
-                <img
-                  key={index}
-                  src={img}
-                  alt={`Gallery ${index + 2}`}
-                  className="w-full h-full object-cover rounded-xl"
-                />
-              ))}
+                {/* Render the rest */}
+                {event.gallery.slice(1).map((img, index) => (
+                  <img
+                    key={index}
+                    src={img}
+                    alt={`Gallery ${index + 2}`}
+                    className="w-full h-full object-cover rounded-xl"
+                  />
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-400 text-center my-6 italic">
+                Gallery images not provided.
+              </p>
+            )}
+          </div>
+
+          <hr className="border border-[#f0f1f2] my-4" />
+
+          <div className="text-black">
+            <h2 className="text-xl font-bold text-black">Contact</h2>
+            <div className="my-3 space-y-2">
+              <p>➤ Organizer : {event.organizer}</p>
+              <p>➤ Email : {event.organizer_email}</p>
             </div>
-          ) : (
-            <p className="text-gray-400 text-center my-6 italic">
-              Gallery images not provided.
-            </p>
-          )}
           </div>
 
           {/* Tickets Progress Slider */}
-          <div className="flex gap-1 items-center bg-[#0f1b2a] rounded-lg p-2 my-4">
+          {/* <div className="flex gap-1 items-center bg-[#0f1b2a] rounded-lg p-2 my-4">
             <p className="whitespace-nowrap">Tickets: </p>
             <div className="w-full bg-white bg-opacity-20 rounded-sm h-5 overflow-hidden flex justify-between items-center relative">
               <div
@@ -291,9 +313,9 @@ const EventDetailPage = () => {
                 {event.tickets_left} Left
               </span>
             </div>
-          </div>
+          </div> */}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div className="bg-[#0f1b2a] p-4 rounded-lg">
               <h3 className="font-semibold mb-2 text-yellow-400">
                 Event Details
@@ -329,9 +351,9 @@ const EventDetailPage = () => {
                 )}
               </div>
             </div>
-          </div>
+          </div> */}
 
-          <div className="flex gap-4 flex-wrap">
+          {/* <div className="flex gap-4 flex-wrap">
             <button
               className="w-full bg-yellow-400 cursor-pointer text-black px-8 py-3 rounded-md font-semibold hover:bg-yellow-500 transition-colors duration-200 block w-full"
               onClick={handleBuyTickets}
@@ -346,7 +368,7 @@ const EventDetailPage = () => {
                 View Ticket
               </button>
             )}
-          </div>
+          </div> */}
         </div>
         <div className="h-max p-[18px] w-[31%] bg-white rounded-xl border border-[#e1e3e6]">
           <h1 className="text-xl font-bold tracking-wide mb-4 text-black uppercase">
@@ -355,13 +377,13 @@ const EventDetailPage = () => {
           <div className="space-y-2">
             <p className="flex items-center text-gray-300">
               <Image src={bookMark} alt="category" className="w-6 h-6 mr-2" />
-              <span className="ml-2 text-black font-semibold text-sm">
+              <span className="ml-2 text-black font-semibold text-sm capitalize">
                 {event.category}
               </span>
             </p>
             <p className="flex items-center text-gray-300">
               <Image src={Calender} alt="calender" className="w-6 h-6 mr-2" />
-              <span className="ml-2 text-black font-semibold text-sm">
+              <span className="ml-2 text-black font-semibold text-sm capitalize">
                 {new Date(event.date).toLocaleDateString("en-GB", {
                   weekday: "short", // "Sun", "Mon", etc.
                   day: "2-digit", // "03"
@@ -372,14 +394,8 @@ const EventDetailPage = () => {
             </p>
             <p className="flex items-center text-gray-300">
               <Image src={Location} alt="location" className="w-6 h-6 mr-2" />
-              <span className="ml-2 text-black font-semibold text-sm">
+              <span className="ml-2 text-black font-semibold text-sm capitalize">
                 {event.location}
-              </span>
-            </p>
-            <p className="flex items-center text-gray-300">
-              <Image src={management} alt="management" className="w-6 h-6 mr-2 pl-[3px]" />
-              <span className="ml-2 text-black font-semibold text-sm">
-                {event.organizer}
               </span>
             </p>
           </div>
@@ -388,7 +404,7 @@ const EventDetailPage = () => {
             <div>
               <p className="text-[#555d6d] text-xs">Starts from</p>
               <span className="text-black font-bold text-xl">
-              ₹{event.price}
+                ₹{event.price}
               </span>
             </div>
 

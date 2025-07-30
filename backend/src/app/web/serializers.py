@@ -32,6 +32,7 @@ class LoginSerializer(serializers.Serializer):
 
 class EventSerializer(serializers.ModelSerializer):
     organizer = serializers.SerializerMethodField()
+    organizer_email = serializers.SerializerMethodField()
     tickets_left = serializers.SerializerMethodField()
     tickets_sold = serializers.SerializerMethodField()
     total_bookings = serializers.SerializerMethodField()
@@ -41,13 +42,16 @@ class EventSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'title', 'description', 'category', 
             'date', 'time', 'duration', 'location', 'price',
-            'special_guest', 'image', 'created_at', 'organizer','total_bookings','max_attendees',
+            'special_guest', 'image', 'created_at', 'organizer','organizer_email','total_bookings','max_attendees',
            'tickets_sold', 'tickets_left',  
         ]
 
     def get_organizer(self, obj):
         name = obj.user.first_name or obj.user.username
         return name.capitalize()
+    
+    def get_organizer_email(self, obj):
+        return obj.user.email
 
     def get_tickets_sold(self, obj):
         return obj.ticket_set.aggregate(Sum('quantity'))['quantity__sum'] or 0

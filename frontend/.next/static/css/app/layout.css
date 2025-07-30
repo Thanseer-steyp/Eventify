@@ -126,6 +126,7 @@
     --radius-md: 0.375rem;
     --radius-lg: 0.5rem;
     --radius-xl: 0.75rem;
+    --radius-4xl: 2rem;
     --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
     --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     --default-transition-duration: 150ms;
@@ -352,9 +353,6 @@
       max-width: 96rem;
     }
   }
-  .mx-3 {
-    margin-inline: calc(var(--spacing) * 3);
-  }
   .mx-auto {
     margin-inline: auto;
   }
@@ -496,17 +494,8 @@
   .w-24 {
     width: calc(var(--spacing) * 24);
   }
-  .w-\[0px\] {
-    width: 0px;
-  }
-  .w-\[24px\] {
-    width: 24px;
-  }
   .w-\[31\%\] {
     width: 31%;
-  }
-  .w-\[40px\] {
-    width: 40px;
   }
   .w-\[50px\] {
     width: 50px;
@@ -718,6 +707,9 @@
   .rounded {
     border-radius: 0.25rem;
   }
+  .rounded-4xl {
+    border-radius: var(--radius-4xl);
+  }
   .rounded-full {
     border-radius: calc(infinity * 1px);
   }
@@ -748,10 +740,6 @@
   .border-b {
     border-bottom-style: var(--tw-border-style);
     border-bottom-width: 1px;
-  }
-  .border-b-2 {
-    border-bottom-style: var(--tw-border-style);
-    border-bottom-width: 2px;
   }
   .border-dashed {
     --tw-border-style: dashed;
@@ -792,9 +780,6 @@
   }
   .border-white {
     border-color: var(--color-white);
-  }
-  .border-yellow-400 {
-    border-color: var(--color-yellow-400);
   }
   .bg-\[\#0B1C2D\] {
     background-color: #0B1C2D;
@@ -840,6 +825,9 @@
   }
   .bg-\[\#ffc107\] {
     background-color: #ffc107;
+  }
+  .bg-black {
+    background-color: var(--color-black);
   }
   .bg-black\/40 {
     background-color: color-mix(in srgb, #000 40%, transparent);
@@ -891,9 +879,6 @@
   }
   .p-8 {
     padding: calc(var(--spacing) * 8);
-  }
-  .p-12 {
-    padding: calc(var(--spacing) * 12);
   }
   .p-\[18px\] {
     padding: 18px;
@@ -952,9 +937,6 @@
   .pt-4 {
     padding-top: calc(var(--spacing) * 4);
   }
-  .pb-1 {
-    padding-bottom: calc(var(--spacing) * 1);
-  }
   .pb-5 {
     padding-bottom: calc(var(--spacing) * 5);
   }
@@ -963,9 +945,6 @@
   }
   .pl-6 {
     padding-left: calc(var(--spacing) * 6);
-  }
-  .pl-\[3px\] {
-    padding-left: 3px;
   }
   .text-center {
     text-align: center;
@@ -1181,6 +1160,13 @@
       }
     }
   }
+  .hover\:border-black {
+    &:hover {
+      @media (hover: hover) {
+        border-color: var(--color-black);
+      }
+    }
+  }
   .hover\:border-gray-500 {
     &:hover {
       @media (hover: hover) {
@@ -1262,13 +1248,6 @@
     &:hover {
       @media (hover: hover) {
         color: var(--color-white);
-      }
-    }
-  }
-  .hover\:text-yellow-400 {
-    &:hover {
-      @media (hover: hover) {
-        color: var(--color-yellow-400);
       }
     }
   }
@@ -1531,9 +1510,6 @@ body {
   font-family: Opal;
   font-weight: normal;
   padding: 8px;
-  color: white;
-  border: 1px solid #facc15;
-  border-radius: 6px;
 }
 ul, li {
   list-style: none;

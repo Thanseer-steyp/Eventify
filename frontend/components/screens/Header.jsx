@@ -49,14 +49,14 @@ function Header() {
   }, []);
 
   return (
-    <header className="bg-[#0b1c2d] w-full py-4 border-b border-gray-700 sticky top-0 z-50">
+    <header className="bg-white w-full py-4 sticky top-0 z-50">
       <div className="px-6">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <h1>
             <Link href="/">
               <div className="flex items-center">
-                <div className="logo mr-4 text-3xl">Eventify</div>
+                <div className="logo mr-4 text-3xl text-black">Eventify</div>
               </div>
             </Link>
           </h1>
@@ -66,10 +66,10 @@ function Header() {
             <li>
               <Link
                 href="/"
-                className={`pb-1 border-b-2 ${
+                className={`p-3 rounded-4xl border border-transparent ${
                   pathname === "/"
-                    ? "text-yellow-400 border-yellow-400"
-                    : "text-white border-transparent hover:text-yellow-400"
+                    ? "text-white  bg-black"
+                    : "text-black  hover:border-black"
                 }`}
               >
                 Home
@@ -78,10 +78,10 @@ function Header() {
             <li>
               <Link
                 href="/events"
-                className={`pb-1 border-b-2 ${
+                className={`p-3 rounded-4xl border border-transparent ${
                   pathname === "/events"
-                    ? "text-yellow-400 border-yellow-400"
-                    : "text-white border-transparent hover:text-yellow-400"
+                    ? "text-white  bg-black"
+                    : "text-black  hover:border-black"
                 }`}
               >
                 Explore Events
@@ -90,10 +90,10 @@ function Header() {
             <li>
               <Link
                 href="/events/create"
-                className={`pb-1 border-b-2 ${
+                className={`p-3 rounded-4xl border border-transparent ${
                   pathname === "/events/create"
-                    ? "text-yellow-400 border-yellow-400"
-                    : "text-white border-transparent hover:text-yellow-400"
+                    ? "text-white  bg-black"
+                    : "text-black  hover:border-black"
                 }`}
               >
                 Create Events
@@ -113,10 +113,10 @@ function Header() {
           <div className="flex items-center gap-3">
             {/* Search Bar */}
             <div className="flex items-center gap-2 border border-gray-400 p-3 rounded-lg w-[400px]">
-              <img src="/glass.svg" alt="Search" className="w-3" />
+              <img src="/glass.svg" alt="Search" className="w-5" />
               <input
                 type="text"
-                className="focus:outline-none w-full text-white"
+                className="focus:outline-none w-full text-black"
                 placeholder="Search for events, shows and programmes"
               />
             </div>
