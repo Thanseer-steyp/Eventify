@@ -7,7 +7,7 @@ import "react-date-range/dist/theme/default.css";
 import Image from "next/image";
 import axios from "axios";
 
-import Wallet from "../../components/assets/wallet.svg";
+import Clock from "../../components/assets/clock.svg";
 import Location from "../../components/assets/location.svg";
 import Calender from "../../components/assets/calendar.svg";
 
@@ -273,7 +273,7 @@ const EventPage = () => {
       const month = monthNames[date.getMonth()];
       const year = date.getFullYear();
 
-      return `${day} ${month} ${year}`;
+      return `${month} ${day},  ${year}`;
     } catch (error) {
       console.error("Error formatting date:", error);
       return dateStr;
@@ -283,7 +283,7 @@ const EventPage = () => {
   return (
     <>
       <div className="text-white min-h-screen">
-        <div className="w-full w-[20%] h-max space-y-6 bg-[url('/bg.png')] bg-contain bg-center bg-[#01517f]">
+        <div className="w-full h-max space-y-6 bg-[url('/bg.png')] bg-contain bg-center bg-[#01517f]">
           <div className="wrapper py-[150px]">
             <h2 className="text-[55px] text-center font-semibold mb-5">
               FIND AN EVENT & BUY TICKETS
@@ -439,19 +439,17 @@ const EventPage = () => {
               </div>
             )}
           </div>
-        </div>
-        <div className="w-full bg-white">
-          <img src="/bg-extend.png" className="w-full" />
+          <div className="w-full bg-white bg-[url('/bg-extend.png')] h-15 bg-no-repeat bg-contain"></div>
         </div>
 
         {/* Right: Event List */}
-        <div className="w-full bg-white space-y-6">
-          <div className="wrapper">
-            <h2 className="text-[40px] text-center font-semibold text-[#01517f]">
+        <div className="w-full bg-white">
+          <div className="wrapper py-5">
+            <h2 className="text-[40px] text-center font-semibold text-[#01517f] mb-8">
               UPCOMING EVENTS
             </h2>
 
-            <div className="grid grid-cols-3 gap-5">
+            <div className="grid grid-cols-3 gap-8">
               {filteredEvents
                 .filter((event) =>
                   event.title.toLowerCase().includes(search.toLowerCase())
@@ -478,12 +476,13 @@ const EventPage = () => {
                 .map((event, index) => {
                   const isPast = isEventPast(event);
                   return (
-                    <div
+                    <Link
+                      href={isPast ? "#" : `/events/${event.id}`}
                       key={event.id || index}
-                      className={`bg-[#1a2a3a] space-y-5 p-4 gap-4 rounded-lg transition-transform duration-300 transform hover:-translate-y-1 ${
+                      className={`bg-white border border-[#d2d2d2] overflow-hidden rounded-lg transition-transform duration-300 transform hover:scale-101 hover:shadow-2xl ${
                         isPast
-                          ? "opacity-70 border-2 border-red-400"
-                          : "hover:bg-[#24344e]"
+                          ? "cursor-not-allowed opacity-80"
+                          : "cursor-pointer"
                       }`}
                     >
                       <div className="w-full block h-[150px] relative">
@@ -493,84 +492,75 @@ const EventPage = () => {
                           </div>
                         )}
                         <Image
-                          src={
-                            typeof event.image === "string" &&
-                            event.image.startsWith("/media")
-                              ? `http://localhost:8000${event.image}`
-                              : event.image || "/placeholder-image.jpg"
-                          }
+                          src={event.image}
                           alt={event.title}
-                          className="w-full h-full overflow-hidden rounded-lg"
+                          className="w-full h-full"
                           width={150}
                           height={150}
                         />
                       </div>
 
-                      <div className="flex flex-col gap-2">
+                      <div className="p-3 space-y-1">
                         <h3
-                          className={`text-2xl font-semibold ${
-                            isPast ? "text-gray-400" : ""
+                          className={`text-lg font-semibold ${
+                            isPast ? "text-gray-400" : "text-black"
                           }`}
                         >
                           {event.title}
                         </h3>
+                        
                         <p
-                          className={`text-md flex items-center w-max ${
-                            isPast ? "text-gray-500" : "text-gray-300"
-                          }`}
-                        >
-                          <Image
-                            src={Location}
-                            alt="Location-Icon"
-                            className="w-3 block mr-2"
-                          />
-                          {event.location}
-                        </p>
-                        <p
-                          className={`text-md flex items-center w-max ${
-                            isPast ? "text-gray-500" : "text-gray-300"
+                          className={`text-md flex items-center w-max text-md ${
+                            isPast ? "text-gray-500" : "text-black"
                           }`}
                         >
                           <Image
                             src={Calender}
                             alt="Calendar-Icon"
-                            className="w-3 block mr-2"
+                            className="w-4 block mr-2"
                           />
                           {formatDisplayDate(event.date)}
                         </p>
                         <p
-                          className={`text-md flex items-center w-max ${
-                            isPast ? "text-gray-500" : "text-gray-300"
+                          className={`text-md flex items-center w-max text-md ${
+                            isPast ? "text-gray-500" : "text-black"
                           }`}
                         >
                           <Image
-                            src={Wallet}
+                            src={Clock}
                             alt="Wallet-Icon"
-                            className="w-3 block mr-2"
+                            className="w-4 block mr-2"
                           />
-                          ₹
-                          {event.price
-                            ? Math.floor(parseFloat(event.price))
-                            : 0}
+                          {new Date(
+                            `1970-01-01T${event.time}`
+                          ).toLocaleTimeString([], {
+                            hour: "numeric",
+                            minute: "2-digit",
+                            hour12: true,
+                          })}
                         </p>
-                      </div>
-
-                      <div className="text-lg flex flex-col justify-between h-full">
-                        <Link
-                          href={isPast ? "#" : `/events/${event.id}`}
-                          className={`w-full text-center px-6 py-2 rounded-md font-semibold transition ${
-                            isPast
-                              ? "bg-gray-600 text-gray-400 cursor-not-allowed"
-                              : "bg-yellow-400 text-black hover:bg-yellow-500"
+                        <p
+                          className={`text-md flex items-center w-max text-md ${
+                            isPast ? "text-gray-500" : "text-black"
                           }`}
-                          onClick={
-                            isPast ? (e) => e.preventDefault() : undefined
-                          }
                         >
-                          {isPast ? "Event Ended" : "Buy Tickets"}
-                        </Link>
+                          <Image
+                            src={Location}
+                            alt="Location-Icon"
+                            className="w-4 block mr-2"
+                          />
+                          {event.location}
+                        </p>
+                        <div
+                          className={`rounded-md flex justify-between px-2 py-1 font-semibold ${
+                            isPast ? "bg-red-600 text-white" : "bg-[#e5e5e5] text-black"
+                          }`}
+                        >
+                          <span className="text-md">₹ {event.price}</span>
+                          <span>|{isPast ? " Event Ended" : "  Book Now"}</span>
+                        </div>
                       </div>
-                    </div>
+                    </Link>
                   );
                 })}
             </div>

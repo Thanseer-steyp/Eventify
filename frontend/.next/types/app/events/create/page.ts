@@ -1,4 +1,4 @@
-// File: /home/user/Documents/Eventify/frontend/app/events/create/page.jsx
+// File: C:\Users\thans\Desktop\Eventify\frontend\app\events\create\page.jsx
 import * as entry from '../../../../../app/events/create/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

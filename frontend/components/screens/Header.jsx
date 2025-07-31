@@ -49,7 +49,7 @@ function Header() {
   }, []);
 
   return (
-    <header className="bg-white w-full py-4 sticky top-0 z-50">
+    <header className="bg-white w-full py-4 sticky top-0 z-50 border-b-2 border-[#f2f2f2]">
       <div className="px-6">
         <div className="flex items-center justify-between">
           {/* Logo */}
@@ -62,11 +62,11 @@ function Header() {
           </h1>
 
           {/* Navigation */}
-          <ul className="flex justify-center items-center gap-12">
+          <ul className="flex justify-center items-center gap-4">
             <li>
               <Link
                 href="/"
-                className={`p-3 rounded-4xl border border-transparent ${
+                className={`px-3 py-2 rounded-4xl border border-transparent text-sm ${
                   pathname === "/"
                     ? "text-white  bg-black"
                     : "text-black  hover:border-black"
@@ -78,7 +78,7 @@ function Header() {
             <li>
               <Link
                 href="/events"
-                className={`p-3 rounded-4xl border border-transparent ${
+                className={`px-3 py-2 rounded-4xl border border-transparent text-sm ${
                   pathname === "/events"
                     ? "text-white  bg-black"
                     : "text-black  hover:border-black"
@@ -90,7 +90,7 @@ function Header() {
             <li>
               <Link
                 href="/events/create"
-                className={`p-3 rounded-4xl border border-transparent ${
+                className={`px-3 py-2  rounded-4xl border border-transparent text-sm ${
                   pathname === "/events/create"
                     ? "text-white  bg-black"
                     : "text-black  hover:border-black"
@@ -102,7 +102,7 @@ function Header() {
             {isAuthenticated && (
               <li
                 onClick={handleLogout}
-                className="text-black cursor-pointer hover:text-red-500"
+                className="text-black cursor-pointer hover:text-red-500 text-sm"
               >
                 Logout
               </li>
