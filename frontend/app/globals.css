@@ -7,7 +7,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --color-gradient-yellow: #ebe7d0; /* Example yellow */
+  /* --color-gradient-yellow: #ebe7d0; */
+  --color-gradient-yellow: #01517f; 
   --color-brand-pure-white: #FFFFFF;
 }
 
@@ -229,5 +230,5 @@ ul, li {
 }
 
 .bg-custom-gradient {
-  background: linear-gradient(180deg, #fff7d1 0%, #ffffff 40%);
+  background: linear-gradient(180deg, #01517f 0%, #ffffff 40%);
 }

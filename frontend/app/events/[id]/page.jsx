@@ -93,7 +93,7 @@ const EventDetailPage = () => {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/events/${id}/`);
+        const res = await fetch(`http://localhost:8000/api/v1/public/events/${id}/`);
         if (!res.ok) throw new Error("Failed to fetch event");
 
         const data = await res.json();
@@ -526,7 +526,7 @@ const EventDetailPage = () => {
 
                     try {
                       const res = await axios.post(
-                        "http://localhost:8000/tickets/book/",
+                        "http://localhost:8000/api/v1/user/tickets/book/",
                         {
                           event: id,
                           quantity: quantity,

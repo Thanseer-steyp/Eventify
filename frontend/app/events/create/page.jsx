@@ -36,12 +36,12 @@ function CreateEventForm() {
   // Convert 24-hour to 12-hour format
   const convertTo12Hour = (time24) => {
     if (!time24) return "";
-    
+
     const [hours, minutes] = time24.split(":");
     const hour = parseInt(hours, 10);
     const ampm = hour >= 12 ? "PM" : "AM";
     const hour12 = hour % 12 || 12;
-    
+
     return `${hour12}:${minutes} ${ampm}`;
   };
 
@@ -53,11 +53,21 @@ function CreateEventForm() {
 
     // Generate years (current year + next 5 years)
     const years = Array.from({ length: 6 }, (_, i) => currentYear + i);
-    
+
     // Month names
     const months = [
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
     ];
 
     // Get days in month
@@ -69,7 +79,7 @@ function CreateEventForm() {
     const getValidDates = () => {
       const daysInMonth = getDaysInMonth(selectedYear, selectedMonth);
       const dates = [];
-      
+
       for (let i = 1; i <= daysInMonth; i++) {
         const dateObj = new Date(selectedYear, selectedMonth, i);
         // Only include dates from today onwards
@@ -86,33 +96,36 @@ function CreateEventForm() {
     const handleMonthYearChange = (newYear, newMonth) => {
       setSelectedYear(newYear);
       setSelectedMonth(newMonth);
-      
+
       // Reset selected date to first valid date if current selection is invalid
       const validDatesForNewMonth = [];
       const daysInMonth = getDaysInMonth(newYear, newMonth);
-      
+
       for (let i = 1; i <= daysInMonth; i++) {
         const dateObj = new Date(newYear, newMonth, i);
         if (dateObj >= new Date(currentYear, currentMonth, currentDate)) {
           validDatesForNewMonth.push(i);
         }
       }
-      
-      if (validDatesForNewMonth.length > 0 && !validDatesForNewMonth.includes(selectedDate)) {
+
+      if (
+        validDatesForNewMonth.length > 0 &&
+        !validDatesForNewMonth.includes(selectedDate)
+      ) {
         setSelectedDate(validDatesForNewMonth[0]);
       }
     };
 
     const handleDateSelect = () => {
       const dateObj = new Date(selectedYear, selectedMonth, selectedDate);
-      const formattedDate = dateObj.toISOString().split('T')[0]; // YYYY-MM-DD format
-      const displayFormattedDate = dateObj.toLocaleDateString('en-US', {
-        weekday: 'short',
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
+      const formattedDate = dateObj.toISOString().split("T")[0]; // YYYY-MM-DD format
+      const displayFormattedDate = dateObj.toLocaleDateString("en-US", {
+        weekday: "short",
+        year: "numeric",
+        month: "short",
+        day: "numeric",
       });
-      
+
       setFormData({
         ...formData,
         date: formattedDate,
@@ -128,22 +141,29 @@ function CreateEventForm() {
           <div className="flex gap-2">
             <select
               value={selectedYear}
-              onChange={(e) => handleMonthYearChange(parseInt(e.target.value), selectedMonth)}
+              onChange={(e) =>
+                handleMonthYearChange(parseInt(e.target.value), selectedMonth)
+              }
               className="flex-1 bg-[#0f1b2a] text-white p-2 rounded border border-gray-600 focus:border-yellow-400"
             >
               {years.map((year) => (
-                <option key={year} value={year}>{year}</option>
+                <option key={year} value={year}>
+                  {year}
+                </option>
               ))}
             </select>
-            
+
             <select
               value={selectedMonth}
-              onChange={(e) => handleMonthYearChange(selectedYear, parseInt(e.target.value))}
+              onChange={(e) =>
+                handleMonthYearChange(selectedYear, parseInt(e.target.value))
+              }
               className="flex-1 bg-[#0f1b2a] text-white p-2 rounded border border-gray-600 focus:border-yellow-400"
             >
               {months.map((month, index) => {
                 // Disable past months for current year
-                const isDisabled = selectedYear === currentYear && index < currentMonth;
+                const isDisabled =
+                  selectedYear === currentYear && index < currentMonth;
                 return (
                   <option key={index} value={index} disabled={isDisabled}>
                     {month}
@@ -169,7 +189,7 @@ function CreateEventForm() {
             </select>
           </div>
         </div>
-        
+
         <div className="flex gap-2 mt-3">
           <button
             type="button"
@@ -196,13 +216,17 @@ function CreateEventForm() {
     const [minute, setMinute] = useState("00");
     const [period, setPeriod] = useState("AM");
 
-    const hours = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, "0"));
-    const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, "0"));
+    const hours = Array.from({ length: 12 }, (_, i) =>
+      (i + 1).toString().padStart(2, "0")
+    );
+    const minutes = Array.from({ length: 60 }, (_, i) =>
+      i.toString().padStart(2, "0")
+    );
 
     const handleTimeSelect = () => {
       const time12 = `${hour}:${minute} ${period}`;
       const time24 = convertTo24Hour(time12);
-      
+
       setFormData({
         ...formData,
         time: time24,
@@ -221,23 +245,29 @@ function CreateEventForm() {
             className="bg-[#0f1b2a] text-white p-2 rounded border border-gray-600 focus:border-yellow-400"
           >
             {hours.map((h) => (
-              <option key={h} value={h}>{h}</option>
+              <option key={h} value={h}>
+                {h}
+              </option>
             ))}
           </select>
-          
+
           <span className="text-white text-xl">:</span>
-          
+
           {/* Minute selector */}
           <select
             value={minute}
             onChange={(e) => setMinute(e.target.value)}
             className="bg-[#0f1b2a] text-white p-2 rounded border border-gray-600 focus:border-yellow-400"
           >
-            {minutes.filter((_, i) => i % 5 === 0).map((m) => (
-              <option key={m} value={m}>{m}</option>
-            ))}
+            {minutes
+              .filter((_, i) => i % 5 === 0)
+              .map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
           </select>
-          
+
           {/* AM/PM selector */}
           <select
             value={period}
@@ -248,7 +278,7 @@ function CreateEventForm() {
             <option value="PM">PM</option>
           </select>
         </div>
-        
+
         <div className="flex gap-2 mt-3">
           <button
             type="button"
@@ -280,17 +310,17 @@ function CreateEventForm() {
   // Convert 12-hour to 24-hour format
   const convertTo24Hour = (time12) => {
     if (!time12) return "";
-    
+
     const [time, period] = time12.split(" ");
     const [hours, minutes] = time.split(":");
     let hour = parseInt(hours, 10);
-    
+
     if (period === "PM" && hour !== 12) {
       hour += 12;
     } else if (period === "AM" && hour === 12) {
       hour = 0;
     }
-    
+
     return `${hour.toString().padStart(2, "0")}:${minutes}`;
   };
 
@@ -306,7 +336,6 @@ function CreateEventForm() {
       "duration",
       "location",
       "price",
-      "specialGuest",
     ];
 
     for (const field of requiredFields) {
@@ -342,7 +371,7 @@ function CreateEventForm() {
 
     try {
       const res = await axios.post(
-        "http://localhost:8000/events/create/",
+        "http://localhost:8000/api/v1/user/events/create/",
         data,
         {
           headers: {
@@ -443,7 +472,7 @@ function CreateEventForm() {
                 </button>
                 {showCustomDatePicker && <CustomDatePicker />}
               </div>
-              
+
               {/* Custom Time Input */}
               <div className="relative">
                 <button
@@ -458,7 +487,7 @@ function CreateEventForm() {
                 </button>
                 {showCustomTimePicker && <CustomTimePicker />}
               </div>
-              
+
               <input
                 name="duration"
                 type="number"
@@ -524,7 +553,7 @@ function CreateEventForm() {
                 name="specialGuest"
                 value={formData.specialGuest}
                 onChange={handleChange}
-                placeholder="Do you have any special guest?"
+                placeholder="Special guest? (optional)"
                 className="w-full p-3 rounded-lg bg-[#0f1b2a] border border-gray-600 text-white placeholder-gray-400 focus:border-yellow-400 focus:outline-none"
               />
             </div>

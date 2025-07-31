@@ -12,7 +12,7 @@ export default function UserDashboard() {
 
     if (token) {
       axios
-        .get("http://localhost:8000/user-profile/", {
+        .get("http://localhost:8000/api/v1/user/user-profile/", {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => {

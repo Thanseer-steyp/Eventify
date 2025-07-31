@@ -18,7 +18,6 @@ const EventPage = () => {
   const [priceSelected, setPriceSelected] = useState(false);
   const [search, setSearch] = useState("");
   const [showCalendar, setShowCalendar] = useState(false);
-  const [suggestions, setSuggestions] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [dateSelected, setDateSelected] = useState(false);
   const [events, setEvents] = useState([]);
@@ -178,7 +177,9 @@ const EventPage = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/events/");
+        const res = await axios.get(
+          "http://localhost:8000/api/v1/public/events/"
+        );
         const data = res.data;
         console.log("Fetched Event Data:", data);
 
@@ -281,130 +282,142 @@ const EventPage = () => {
 
   return (
     <>
-      <div className="bg-[#0B1C2D] text-white min-h-screen">
-        <div className="wrapper flex pb-5">
-          <div className="w-full lg:w-[20%] p-4 border border-gray-700 rounded-md h-max mt-4 space-y-6">
-            <h2 className="text-xl font-bold mb-2">Filter Events</h2>
+      <div className="text-white min-h-screen">
+        <div className="w-full w-[20%] h-max space-y-6 bg-[url('/bg.png')] bg-contain bg-center bg-[#01517f]">
+          <div className="wrapper py-[150px]">
+            <h2 className="text-[55px] text-center font-semibold mb-5">
+              FIND AN EVENT & BUY TICKETS
+            </h2>
 
             {/* Show Past Events Toggle Button */}
-
-            {/* Date Filter */}
-            <div className="relative" ref={calendarRef}>
-              <label className="block text-sm font-semibold mb-2">Date</label>
-              <button
-                onClick={() => setShowCalendar(!showCalendar)}
-                className="flex flex-col text-left bg-[#131d30] text-white px-4 py-2 rounded-md border border-gray-600 hover:border-yellow-400 transition w-full"
-              >
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">📅 Date Range</span>
-                  <span className="text-yellow-400">
-                    {showCalendar ? "▲" : "▼"}
-                  </span>
-                </div>
-              </button>
-
-              {dateSelected && (
-                <span className="text-sm block mt-2 mx-auto text-gray-300 w-max">
-                  {[dateRange[0].startDate, dateRange[0].endDate]
-                    .map(
-                      (d) =>
-                        `${d.getDate().toString().padStart(2, "0")}-${(
-                          d.getMonth() + 1
-                        )
-                          .toString()
-                          .padStart(2, "0")}-${d.getFullYear()}`
-                    )
-                    .join(" - ")}
-                </span>
-              )}
-
-              {showCalendar && (
-                <div className="absolute mt-2 z-20 bg-white rounded-md shadow-lg">
-                  <DateRange
-                    editableDateInputs={true}
-                    onChange={(item) => {
-                      setDateRange([item.selection]);
-                      setDateSelected(true);
-                    }}
-                    moveRangeOnFirstSelection={false}
-                    ranges={dateRange}
-                    minDate={new Date()}
-                    className="rounded-md"
-                  />
-                </div>
-              )}
-            </div>
-
-            {/* Location Input */}
-            <div className="relative">
-              <label className="block text-sm font-semibold mb-2">
-                Location
+            <div className="mb-4">
+              <label className="block font-medium text-sm mb-1 text-center">
+                FIND EVENT BY NAME
               </label>
               <input
                 type="text"
-                placeholder="Search location..."
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                className="px-4 py-2 w-full rounded-md bg-[#131d30] text-white border border-gray-600 focus:outline-none focus:border-yellow-400"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="p-2 rounded-md bg-white text-black focus:outline-none w-full"
               />
-              {suggestions.length > 0 && (
-                <div className="absolute bg-white text-black w-full rounded-md mt-1 max-h-60 overflow-y-auto shadow-lg z-10">
-                  {suggestions.map((suggestion, index) => (
-                    <div
-                      key={index}
-                      onClick={() => {
-                        setLocation(suggestion);
-                        setSuggestions([]);
-                      }}
-                      className="px-4 py-2 hover:bg-yellow-100 cursor-pointer border-b border-gray-200"
-                    >
-                      {suggestion}
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
+            <div className="grid grid-cols-3 gap-5">
+              {/* Date Filter */}
+              <div className="relative" ref={calendarRef}>
+                <label className="block font-medium text-sm mb-1 text-center">
+                  FIND BY DATE
+                </label>
+                <button
+                  onClick={() => setShowCalendar(!showCalendar)}
+                  className="flex flex-col text-left bg-white text-black px-4 py-2 rounded-md w-full"
+                >
+                  <div className="flex justify-between items-center w-full">
+                    <span className="text-sm text-black">
+                      {dateSelected
+                        ? [dateRange[0].startDate, dateRange[0].endDate]
+                            .map(
+                              (d) =>
+                                `${d.getDate().toString().padStart(2, "0")}-${(
+                                  d.getMonth() + 1
+                                )
+                                  .toString()
+                                  .padStart(2, "0")}-${d.getFullYear()}`
+                            )
+                            .join(" - ")
+                        : ""}
+                    </span>
+                    <span className="text-yellow-400 ml-2">
+                      {showCalendar ? "▲" : "▼"}
+                    </span>
+                  </div>
+                </button>
 
-            {/* Price Slider */}
-            <div>
-              <label className="block text-sm font-semibold mb-2">
-                Max price: ₹{price}
-                {!priceSelected && (
-                  <span className="ml-2 text-gray-400">(not applied)</span>
+                {showCalendar && (
+                  <div className="absolute mt-2 z-20 bg-white rounded-md shadow-lg">
+                    <DateRange
+                      editableDateInputs={true}
+                      onChange={(item) => {
+                        setDateRange([item.selection]);
+                        setDateSelected(true);
+                      }}
+                      moveRangeOnFirstSelection={false}
+                      ranges={dateRange}
+                      minDate={new Date()}
+                      className="rounded-md"
+                    />
+                  </div>
                 )}
-              </label>
-              <input
-                type="range"
-                min={0}
-                max={1000}
-                step={50}
-                value={price}
-                onChange={(e) => {
-                  setPrice(Number(e.target.value));
-                  setPriceSelected(true);
-                }}
-                className="w-full accent-yellow-400"
-              />
+              </div>
+
+              {/* Location Input */}
+              <div className="relative">
+                <label className="block text-sm font-medium mb-1 text-center">
+                  FIND BY LOCATION
+                </label>
+                <input
+                  type="text"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  className="p-2 rounded-md bg-white text-black focus:outline-none w-full"
+                />
+              </div>
+
+              {/* Price Slider */}
+              <div>
+                <label className="block text-sm font-medium text-center mb-1 ">
+                  MAX PRICE: {price}
+                  {!priceSelected && (
+                    <span className="ml-2 text-gray-400">(not applied)</span>
+                  )}
+                </label>
+                <div className="p-3 rounded-md bg-white flex items-center">
+                  <input
+                    type="range"
+                    min={0}
+                    max={1000}
+                    step={50}
+                    value={price}
+                    onChange={(e) => {
+                      setPrice(Number(e.target.value));
+                      setPriceSelected(true);
+                    }}
+                    className="w-full"
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Filter Buttons */}
-            <button
-              onClick={handleFilter}
-              className="bg-yellow-400 text-black px-6 py-2 rounded-md font-semibold hover:bg-yellow-500 transition w-full"
-            >
-              {filtersApplied ? "Update Filters" : "Apply Filters"}
-            </button>
+            <div className="flex justify-center gap-3 mt-4">
+              <button
+                onClick={handleFilter}
+                className="bg-yellow-400 text-white px-5 py-2 rounded-md font-semibold cursor-pointer hover:bg-yellow-500 transition"
+              >
+                Find events
+              </button>
 
-            <button
-              onClick={handleClearFilters}
-              className="bg-gray-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-gray-700 transition mx-auto w-full"
-            >
-              Clear Filters
-            </button>
+              <button
+                onClick={handleClearFilters}
+                className="border border-white text-white px-5 py-2 rounded-md font-semibold cursor-pointer"
+              >
+                Clear
+              </button>
+
+              <button
+                onClick={() => setShowPastEvents(!showPastEvents)}
+                className={`px-5 py-2 rounded-md font-semibold transition ${
+                  showPastEvents
+                    ? "bg-red-600 text-white hover:bg-red-700"
+                    : "bg-blue-600 text-white hover:bg-blue-700"
+                }`}
+              >
+                {showPastEvents ? "Hide Past Events" : "Show Past Events"}
+              </button>
+            </div>
 
             {/* Filter Status */}
             {filtersApplied && (
-              <div className="text-sm text-yellow-400 text-center">
+              <div className="text-sm text-yellow-400 text-center mt-3">
                 Showing {filteredEvents.length} of {events.length} events
                 <div className="text-xs text-gray-400 mt-1">
                   Active filters:
@@ -421,35 +434,22 @@ const EventPage = () => {
 
             {/* Show when no filters are applied */}
             {!filtersApplied && (
-              <div className="text-sm text-gray-400 text-center">
+              <div className="text-sm text-gray-400 text-center mt-3">
                 No filters applied
               </div>
             )}
-
-            <button
-              onClick={() => setShowPastEvents(!showPastEvents)}
-              className={`w-full px-4 py-2 rounded-md font-semibold transition ${
-                showPastEvents
-                  ? "bg-red-600 text-white hover:bg-red-700"
-                  : "bg-blue-600 text-white hover:bg-blue-700"
-              }`}
-            >
-              {showPastEvents ? "Hide Past Events" : "Show Past Events"}
-            </button>
           </div>
+        </div>
+        <div className="w-full bg-white">
+          <img src="/bg-extend.png" className="w-full" />
+        </div>
 
-          {/* Right: Event List */}
-          <div className="w-full lg:w-[80%] pl-6 space-y-6">
-            <div className="flex justify-between items-center mt-4">
-              <h2 className="text-5xl font-bold">Events</h2>
-              <input
-                type="text"
-                placeholder="Search events..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="px-4 py-2 rounded-md bg-[#131d30] text-white border border-gray-600 w-1/2 focus:outline-none focus:border-yellow-400"
-              />
-            </div>
+        {/* Right: Event List */}
+        <div className="w-full bg-white space-y-6">
+          <div className="wrapper">
+            <h2 className="text-[40px] text-center font-semibold text-[#01517f]">
+              UPCOMING EVENTS
+            </h2>
 
             <div className="grid grid-cols-3 gap-5">
               {filteredEvents

@@ -28,7 +28,7 @@ function Authentication() {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:8000/signup/", {
+      await axios.post("http://localhost:8000/api/v1/auth/signup/", {
         first_name: firstname,
         username,
         email,
@@ -46,7 +46,7 @@ function Authentication() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:8000/login/", {
+      const res = await axios.post("http://localhost:8000/api/v1/auth/login/", {
         username,
         password,
       });
@@ -132,7 +132,7 @@ function Authentication() {
               </p>
               <button
                 type="submit"
-                className="w-full py-2 bg-yellow-400 text-black font-semibold rounded"
+                className="w-full py-2 bg-yellow-400 text-black font-semibold rounded cursor-pointer"
               >
                 Log in
               </button>
@@ -191,7 +191,7 @@ function Authentication() {
               </p>
               <button
                 type="submit"
-                className="w-full py-2 bg-yellow-400 text-black font-semibold rounded"
+                className="w-full py-2 bg-yellow-400 text-black font-semibold rounded cursor-pointer"
               >
                 Create Account
               </button>

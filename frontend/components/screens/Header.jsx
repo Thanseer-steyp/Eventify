@@ -102,7 +102,7 @@ function Header() {
             {isAuthenticated && (
               <li
                 onClick={handleLogout}
-                className="text-white cursor-pointer hover:text-red-500"
+                className="text-black cursor-pointer hover:text-red-500"
               >
                 Logout
               </li>
