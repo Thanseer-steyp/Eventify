@@ -83,50 +83,40 @@ const EventPage = () => {
       dateRange,
       dateSelected,
       priceSelected,
+      search,
     });
 
     const filtered = events.filter((event) => {
-      // First check if event is in the past - exclude it only if showPastEvents is false
-      if (!showPastEvents && isEventPast(event)) {
+      // Always exclude past events from search results
+      if (isEventPast(event)) {
         return false;
       }
 
-      // Location filter - only apply if location is entered
       const matchesLocation =
         location.trim() === "" ||
         event.location.toLowerCase().includes(location.toLowerCase().trim());
 
-      // Price filter - only apply if user has interacted with price slider
       let matchesPrice = true;
       if (priceSelected) {
         const eventPrice = event.price ? parseFloat(event.price) : 0;
         matchesPrice = eventPrice <= price;
       }
 
-      // Date filter - only apply if user has explicitly selected a date
       let matchesDate = true;
       if (dateSelected) {
         const start = new Date(dateRange[0].startDate);
         const end = new Date(dateRange[0].endDate);
-
-        // Set time to beginning and end of day for proper comparison
         start.setHours(0, 0, 0, 0);
         end.setHours(23, 59, 59, 999);
-
         const eventDate = parseEventDate(event.date);
         matchesDate = eventDate >= start && eventDate <= end;
       }
 
-      console.log(`Event: ${event.title}`, {
-        matchesLocation,
-        matchesPrice,
-        matchesDate,
-        dateSelected,
-        priceSelected,
-        isNotPast: !isEventPast(event),
-      });
+      const matchesSearch =
+        search.trim() === "" ||
+        event.title.toLowerCase().includes(search.toLowerCase().trim());
 
-      return matchesLocation && matchesPrice && matchesDate;
+      return matchesLocation && matchesPrice && matchesDate && matchesSearch;
     });
 
     console.log("Filtered events:", filtered);
@@ -138,6 +128,7 @@ const EventPage = () => {
     setLocation("");
     setPrice(1000);
     setPriceSelected(false);
+    setSearch("");
 
     // Reset date range to current month
     const today = new Date();
@@ -151,16 +142,9 @@ const EventPage = () => {
       },
     ]);
 
-    // Show events based on showPastEvents toggle
-    if (showPastEvents) {
-      setFilteredEvents(events); // Show all events
-    } else {
-      const upcomingEvents = events.filter((event) => !isEventPast(event));
-      setFilteredEvents(upcomingEvents); // Show only upcoming events
-    }
-
     setDateSelected(false);
     setFiltersApplied(false);
+    setFilteredEvents([]);
     setShowCalendar(false); // Close calendar
   };
 
@@ -192,16 +176,6 @@ const EventPage = () => {
         }));
 
         setEvents(backendEvents);
-
-        // Show events based on showPastEvents toggle
-        if (showPastEvents) {
-          setFilteredEvents(backendEvents); // Show all events
-        } else {
-          const upcomingEvents = backendEvents.filter(
-            (event) => !isEventPast(event)
-          );
-          setFilteredEvents(upcomingEvents); // Show only upcoming events
-        }
       } catch (error) {
         console.error("Error fetching events:", error);
       }
@@ -233,21 +207,6 @@ const EventPage = () => {
     return () => clearInterval(interval);
   }, [events, filteredEvents, showPastEvents]);
 
-  // Update filtered events when showPastEvents toggle changes
-  useEffect(() => {
-    if (showPastEvents) {
-      setFilteredEvents(events); // Show all events
-    } else {
-      const upcomingEvents = events.filter((event) => !isEventPast(event));
-      setFilteredEvents(upcomingEvents); // Show only upcoming events
-    }
-
-    // If filters were applied, clear them when toggling past events
-    if (filtersApplied) {
-      setFiltersApplied(false);
-    }
-  }, [showPastEvents, events]);
-
   // Format date for display (yyyy-mm-dd to dd MMM yyyy)
   const formatDisplayDate = (dateStr) => {
     if (!dateStr) return "Date";
@@ -277,6 +236,125 @@ const EventPage = () => {
     } catch (error) {
       console.error("Error formatting date:", error);
       return dateStr;
+    }
+  };
+
+  // Helper function to sort events by date and time
+  const sortEventsByDateTime = (eventsList) => {
+    return eventsList.sort((a, b) => {
+      const getDateTime = (event) => {
+        const datePart = parseEventDate(event.date);
+        const timePart = event.time || "12:00 AM"; // default to midnight if no time
+
+        const [rawTime, modifier] = timePart.split(" ");
+        let [hours, minutes] = rawTime.split(":").map(Number);
+
+        if (modifier?.toLowerCase() === "pm" && hours < 12) hours += 12;
+        if (modifier?.toLowerCase() === "am" && hours === 12) hours = 0;
+
+        datePart.setHours(hours, minutes, 0, 0);
+        return datePart;
+      };
+
+      return getDateTime(a) - getDateTime(b);
+    });
+  };
+
+  // Helper function to render event cards
+  const renderEventCard = (event, index) => {
+    const isPast = isEventPast(event);
+    return (
+      <Link
+        href={isPast ? "#" : `/events/${event.id}`}
+        onClick={(e) => {
+          if (isPast) {
+            e.preventDefault(); // stops the navigation
+          }
+        }}
+        key={event.id || index}
+        className={`bg-white border border-[#d2d2d2] overflow-hidden rounded-lg transition-transform duration-300 transform hover:scale-101 hover:shadow-2xl ${
+          isPast ? "cursor-not-allowed opacity-80" : "cursor-pointer"
+        }`}
+      >
+        <div className="w-full block h-[150px] relative">
+          {isPast && (
+            <div className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded text-xs font-bold z-10">
+              PAST
+            </div>
+          )}
+          <Image
+            src={event.image}
+            alt={event.title}
+            className="w-full h-full"
+            width={150}
+            height={150}
+          />
+        </div>
+
+        <div className="p-3 space-y-1">
+          <h3
+            className={`text-lg font-semibold ${
+              isPast ? "text-gray-400" : "text-black"
+            }`}
+          >
+            {event.title}
+          </h3>
+
+          <p
+            className={`text-md flex items-center w-max text-md ${
+              isPast ? "text-gray-500" : "text-black"
+            }`}
+          >
+            <Image
+              src={Calender}
+              alt="Calendar-Icon"
+              className="w-4 block mr-2"
+            />
+            {formatDisplayDate(event.date)}
+          </p>
+          <p
+            className={`text-md flex items-center w-max text-md ${
+              isPast ? "text-gray-500" : "text-black"
+            }`}
+          >
+            <Image src={Clock} alt="Wallet-Icon" className="w-4 block mr-2" />
+            {new Date(`1970-01-01T${event.time}`).toLocaleTimeString([], {
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: true,
+            })}
+          </p>
+          <p
+            className={`text-md flex items-center w-max text-md ${
+              isPast ? "text-gray-500" : "text-black"
+            }`}
+          >
+            <Image
+              src={Location}
+              alt="Location-Icon"
+              className="w-4 block mr-2"
+            />
+            {event.location}
+          </p>
+          <div
+            className={`rounded-md flex justify-between px-2 py-1 font-semibold ${
+              isPast ? "bg-red-600 text-white" : "bg-[#e5e5e5] text-black"
+            }`}
+          >
+            <span className="text-md">₹ {event.price}</span>
+            <span>|{isPast ? " Event Ended" : "  Book Now"}</span>
+          </div>
+        </div>
+      </Link>
+    );
+  };
+
+  // Get display events based on showPastEvents toggle
+  const getDisplayEvents = (eventsList) => {
+    if (showPastEvents) {
+      return eventsList; // Show all events
+    } else {
+      return eventsList.filter((event) => !isEventPast(event)); // Show only upcoming events
     }
   };
 
@@ -418,16 +496,18 @@ const EventPage = () => {
             {/* Filter Status */}
             {filtersApplied && (
               <div className="text-sm text-yellow-400 text-center mt-3">
-                Showing {filteredEvents.length} of {events.length} events
+                Showing {filteredEvents.length} of{" "}
+                {events.filter((event) => !isEventPast(event)).length} events
                 <div className="text-xs text-gray-400 mt-1">
                   Active filters:
-                  {location.trim() && " Location"}
-                  {priceSelected && " Price"}
-                  {dateSelected && " Date"}
-                  {!location.trim() &&
-                    !priceSelected &&
-                    !dateSelected &&
-                    " None"}
+                  {[
+                    search.trim() && " Name",
+                    location.trim() && " Location",
+                    priceSelected && " Price",
+                    dateSelected && " Date",
+                  ]
+                    .filter(Boolean)
+                    .join(" | ") || " None"}
                 </div>
               </div>
             )}
@@ -439,144 +519,79 @@ const EventPage = () => {
               </div>
             )}
           </div>
-          <div className="w-full bg-white bg-[url('/bg-extend.png')] h-15 bg-no-repeat bg-contain"></div>
+          <div className="w-full bg-white bg-[url('/bg-extend.png')] h-16 bg-no-repeat bg-cover"></div>
         </div>
 
-        {/* Right: Event List */}
+        {/* Event Sections */}
         <div className="w-full bg-white">
-          <div className="wrapper py-5">
+          {/* Past Events Section - Show only when showPastEvents is true */}
+
+          {/* Search Results Section - Show when filters are applied */}
+          {filtersApplied && (
+            <div className="wrapper py-10 border-b border-[#bebebe]">
+              <h2 className="text-[40px] text-center font-semibold text-[#01517f] mb-8">
+                SEARCH RESULTS
+              </h2>
+
+              <div className="grid grid-cols-3 gap-8">
+                {sortEventsByDateTime(filteredEvents).map((event, index) =>
+                  renderEventCard(event, index)
+                )}
+              </div>
+
+              {/* No search results message */}
+              {filteredEvents.length === 0 && (
+                <div className="text-center text-gray-400 py-8">
+                  <p className="text-xl">
+                    No events found matching your filters.
+                  </p>
+                  <p className="text-sm mt-2">
+                    Try adjusting your search criteria.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Upcoming Events Section */}
+          <div className="wrapper py-10">
             <h2 className="text-[40px] text-center font-semibold text-[#01517f] mb-8">
               UPCOMING EVENTS
             </h2>
 
             <div className="grid grid-cols-3 gap-8">
-              {filteredEvents
-                .filter((event) =>
-                  event.title.toLowerCase().includes(search.toLowerCase())
-                )
-                .sort((a, b) => {
-                  const getDateTime = (event) => {
-                    const datePart = parseEventDate(event.date);
-                    const timePart = event.time || "12:00 AM"; // default to midnight if no time
-
-                    const [rawTime, modifier] = timePart.split(" ");
-                    let [hours, minutes] = rawTime.split(":").map(Number);
-
-                    if (modifier?.toLowerCase() === "pm" && hours < 12)
-                      hours += 12;
-                    if (modifier?.toLowerCase() === "am" && hours === 12)
-                      hours = 0;
-
-                    datePart.setHours(hours, minutes, 0, 0);
-                    return datePart;
-                  };
-
-                  return getDateTime(a) - getDateTime(b);
-                })
-                .map((event, index) => {
-                  const isPast = isEventPast(event);
-                  return (
-                    <Link
-                      href={isPast ? "#" : `/events/${event.id}`}
-                      key={event.id || index}
-                      className={`bg-white border border-[#d2d2d2] overflow-hidden rounded-lg transition-transform duration-300 transform hover:scale-101 hover:shadow-2xl ${
-                        isPast
-                          ? "cursor-not-allowed opacity-80"
-                          : "cursor-pointer"
-                      }`}
-                    >
-                      <div className="w-full block h-[150px] relative">
-                        {isPast && (
-                          <div className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded text-xs font-bold z-10">
-                            PAST
-                          </div>
-                        )}
-                        <Image
-                          src={event.image}
-                          alt={event.title}
-                          className="w-full h-full"
-                          width={150}
-                          height={150}
-                        />
-                      </div>
-
-                      <div className="p-3 space-y-1">
-                        <h3
-                          className={`text-lg font-semibold ${
-                            isPast ? "text-gray-400" : "text-black"
-                          }`}
-                        >
-                          {event.title}
-                        </h3>
-                        
-                        <p
-                          className={`text-md flex items-center w-max text-md ${
-                            isPast ? "text-gray-500" : "text-black"
-                          }`}
-                        >
-                          <Image
-                            src={Calender}
-                            alt="Calendar-Icon"
-                            className="w-4 block mr-2"
-                          />
-                          {formatDisplayDate(event.date)}
-                        </p>
-                        <p
-                          className={`text-md flex items-center w-max text-md ${
-                            isPast ? "text-gray-500" : "text-black"
-                          }`}
-                        >
-                          <Image
-                            src={Clock}
-                            alt="Wallet-Icon"
-                            className="w-4 block mr-2"
-                          />
-                          {new Date(
-                            `1970-01-01T${event.time}`
-                          ).toLocaleTimeString([], {
-                            hour: "numeric",
-                            minute: "2-digit",
-                            hour12: true,
-                          })}
-                        </p>
-                        <p
-                          className={`text-md flex items-center w-max text-md ${
-                            isPast ? "text-gray-500" : "text-black"
-                          }`}
-                        >
-                          <Image
-                            src={Location}
-                            alt="Location-Icon"
-                            className="w-4 block mr-2"
-                          />
-                          {event.location}
-                        </p>
-                        <div
-                          className={`rounded-md flex justify-between px-2 py-1 font-semibold ${
-                            isPast ? "bg-red-600 text-white" : "bg-[#e5e5e5] text-black"
-                          }`}
-                        >
-                          <span className="text-md">₹ {event.price}</span>
-                          <span>|{isPast ? " Event Ended" : "  Book Now"}</span>
-                        </div>
-                      </div>
-                    </Link>
-                  );
-                })}
+              {sortEventsByDateTime(
+                events.filter((event) => !isEventPast(event))
+              ).map((event, index) => renderEventCard(event, index))}
             </div>
 
-            {/* No events message */}
-            {filteredEvents.length === 0 && events.length > 0 && (
+            {/* No upcoming events message */}
+            {events.filter((event) => !isEventPast(event)).length === 0 && (
               <div className="text-center text-gray-400 py-8">
-                <p className="text-xl">
-                  No events found matching your filters.
-                </p>
-                <p className="text-sm mt-2">
-                  Try adjusting your search criteria.
-                </p>
+                <p className="text-xl">No upcoming events available.</p>
               </div>
             )}
           </div>
+          {showPastEvents && (
+            <div className="wrapper py-10 border-t border-[#bebebe]">
+              <h2 className="text-[40px] text-center font-semibold text-[#01517f] mb-8">
+                PAST EVENTS
+              </h2>
+
+              <div className="grid grid-cols-3 gap-8">
+                {sortEventsByDateTime(
+                  events.filter((event) => isEventPast(event))
+                ).map((event, index) => renderEventCard(event, index))}
+              </div>
+
+              {/* No past events message */}
+              {events.filter((event) => isEventPast(event)).length === 0 && (
+                <div className="text-center text-gray-400 py-8">
+                  <p className="text-xl">No past events available.</p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </>

@@ -42,16 +42,16 @@ function LoopCarousel() {
   const getPosition = (i) => {
     if (i === index) return "z-20 scale-100";
     if (i === (index - 1 + total) % total)
-      return "-translate-x-[110%] scale-75 z-10 opacity-80";
+      return "-translate-x-[110%] scale-75 z-10";
     if (i === (index + 1) % total)
-      return "translate-x-[110%] scale-75 z-10 opacity-80";
+      return "translate-x-[110%] scale-75 z-10";
     return "opacity-0 scale-50 z-0 pointer-events-none";
   };
 
   return (
-    <div className="bg-[#0b1c2d]">
+    <div className="bg-white">
       <div className="wrapper "></div>
-      <div className="relative h-[calc(100vh-87px)] overflow-hidden bg-[#0b1c2d] flex items-center justify-center">
+      <div className="relative h-[calc(100vh-87px)] overflow-hidden bg-white flex items-center justify-center ">
         {/* 🔁 All Slides Positioned Absolutely */}
         {carouselImages.map((image, i) => (
           <div
@@ -64,7 +64,7 @@ function LoopCarousel() {
               src={image.src}
               alt={image.alt}
               fill
-              className="object-cover rounded-xl opacity-75"
+              className="object-cover rounded-xl"
             />
 
             {/* 🔻 Slide Content */}

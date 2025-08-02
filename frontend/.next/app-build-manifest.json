@@ -9,6 +9,7 @@
     "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
+      "static/css/app/page.css",
       "static/chunks/app/page.js"
     ],
     "/events/page": [
@@ -23,11 +24,10 @@
       "static/css/app/events/create/page.css",
       "static/chunks/app/events/create/page.js"
     ],
-    "/events/[id]/page": [
+    "/_not-found/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/events/[id]/page.css",
-      "static/chunks/app/events/[id]/page.js"
+      "static/chunks/app/_not-found/page.js"
     ]
   }
 }

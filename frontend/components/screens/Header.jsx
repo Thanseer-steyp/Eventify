@@ -49,7 +49,7 @@ function Header() {
   }, []);
 
   return (
-    <header className="bg-white w-full py-4 sticky top-0 z-50 border-b-2 border-[#f2f2f2]">
+    <header className="bg-[#f2f6f9] w-full py-4 sticky top-0 z-50 border-b-2 border-[#f2f2f2]">
       <div className="px-6">
         <div className="flex items-center justify-between">
           {/* Logo */}

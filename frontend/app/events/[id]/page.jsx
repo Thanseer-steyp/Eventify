@@ -93,7 +93,9 @@ const EventDetailPage = () => {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/v1/public/events/${id}/`);
+        const res = await fetch(
+          `http://localhost:8000/api/v1/public/events/${id}/`
+        );
         if (!res.ok) throw new Error("Failed to fetch event");
 
         const data = await res.json();
@@ -152,6 +154,22 @@ const EventDetailPage = () => {
               <p className="leading-relaxed text-l">{event.description}</p>
             </div>
           )}
+          <hr className="border border-[#f0f1f2] my-4" />
+
+          <div className="text-black">
+            <h2 className="text-xl font-bold text-black">Special Guest</h2>
+            <div className="my-3 space-y-2">
+              <div>
+                <Image
+                  src={event.guest_avatar || event.image}
+                  alt={event.title}
+                  width={50}
+                  height={50}
+                />
+              </div>
+              <p>{event.guest}</p>
+            </div>
+          </div>
           <hr className="border border-[#f0f1f2] my-4" />
           <div className="text-black">
             <h2 className="text-xl font-bold mb-3">Event Guide</h2>

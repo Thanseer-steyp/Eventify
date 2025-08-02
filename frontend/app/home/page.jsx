@@ -2,6 +2,7 @@
 import LoopCarousel from "../../components/screens/LoopCarousel"
 import Stats from "../../components/screens/Stats"
 import Feature from '../../components/screens/Feature';
+import FeedbackCarousel from '../../components/screens/FeedbackCarousel';
 
 
 function Home() {
@@ -10,6 +11,7 @@ function Home() {
       <LoopCarousel />
       <Stats />
       <Feature />
+      <FeedbackCarousel />
     </>
   );
 }

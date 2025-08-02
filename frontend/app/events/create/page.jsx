@@ -16,7 +16,7 @@ function CreateEventForm() {
     duration: "",
     location: "",
     price: "",
-    specialGuest: "",
+    guest: "",
     tags: "",
     image: null,
   };
@@ -366,7 +366,7 @@ function CreateEventForm() {
     data.append("duration", formData.duration);
     data.append("location", formData.location);
     data.append("price", formData.price);
-    data.append("special_guest", formData.specialGuest);
+    data.append("guest", formData.guest);
     if (formData.image) data.append("image", formData.image);
 
     try {
@@ -550,8 +550,8 @@ function CreateEventForm() {
               />
               <input
                 type="text"
-                name="specialGuest"
-                value={formData.specialGuest}
+                name="guest"
+                value={formData.guest}
                 onChange={handleChange}
                 placeholder="Special guest? (optional)"
                 className="w-full p-3 rounded-lg bg-[#0f1b2a] border border-gray-600 text-white placeholder-gray-400 focus:border-yellow-400 focus:outline-none"

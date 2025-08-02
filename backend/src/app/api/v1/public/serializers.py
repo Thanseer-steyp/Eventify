@@ -14,7 +14,7 @@ class EventSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'title', 'description', 'category', 
             'date', 'time', 'duration', 'location', 'price',
-            'special_guest', 'image', 'created_at', 'organizer',
+            'guest', 'image', 'created_at', 'organizer',
             'organizer_email', 'total_bookings', 'max_attendees',
             'tickets_sold', 'tickets_left',  
         ]
