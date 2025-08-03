@@ -7,29 +7,29 @@ import "slick-carousel/slick/slick-theme.css";
 const testimonials = [
   {
     stars: 5,
-    text: `Greenlands Farm Village have found Trybooking to have excellent customer service...`,
+    text: `Greenlands Farm Village have found Eventify to have excellent customer service...`,
     name: "Jane",
     company: "Greenlands Farm Village",
-    logo: "/logos/greenlands.png",
+    logo: "/greenlands_mini.png",
   },
   {
     stars: 5,
-    text: `We're delighted with the quality of customer service from TryBooking...`,
+    text: `We're delighted with the quality of customer service from Eventify...`,
     name: "Lizzie Beckford",
     company: "Pink Link Ladies",
-    logo: "/logos/pinklink.png",
+    logo: "/pink-link-logo.png",
   },
   {
     stars: 5,
     text: `Absolutely great package, easy to use from all angles from creation of an event...`,
     name: "Paul Chambers",
     company: "via Google",
-    logo: "/logos/googlebadge.png",
+    logo: "/gcrn.webp",
   },
 ];
 
 const TestimonialCard = ({ review }) => (
-  <div className="bg-white rounded-xl p-6 shadow-md h-full flex flex-col justify-between">
+  <div className="bg-white p-6 rounded-xl flex flex-col justify-between">
     <div>
       <div className="text-yellow-500 mb-2">
         {"★".repeat(review.stars)}
@@ -48,7 +48,7 @@ const TestimonialCard = ({ review }) => (
 
 const TestimonialCarousel = () => {
   const settings = {
-    dots: true,
+    dots: false,
     infinite: true,
     speed: 700,
     slidesToShow: 3,
@@ -68,10 +68,10 @@ const TestimonialCarousel = () => {
   };
 
   return (
-    <div className="bg-[#f1f7fa] text-center py-16">
+    <div className="bg-[#f1f7fa] py-16">
       <div className="wrapper">
-      <h2 className="text-3xl font-bold text-sky-900 mb-4">Trusted by thousands of event organisers</h2>
-      <p className="mb-6 text-gray-700">
+      <h2 className="text-3xl font-bold text-sky-900 mb-4 text-center">Trusted by thousands of event organisers</h2>
+      <p className="mb-6 text-gray-700 text-center">
         From small fundraisers to festivals, thousands of event organisers trust our event ticketing solution.
       </p>
       <Slider {...settings}>

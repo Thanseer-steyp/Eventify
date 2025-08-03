@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from api.v1.public.serializers import EventSerializer
 from web.models import Event, Ticket
 from django.contrib.auth import get_user_model
 
@@ -12,13 +13,14 @@ class TicketSerializer(serializers.ModelSerializer):
         model = Ticket
         fields = ['id', 'event_title', 'event_date', 'quantity', 'booked_at']
 
-class UserTicketsWrapperSerializer(serializers.Serializer):
-    first_name = serializers.CharField()
-    bookings = TicketSerializer(many=True)
 
-class UserBookingSerializer(serializers.ModelSerializer):
-    tickets = TicketSerializer(many=True, read_only=True)
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    first_name = serializers.CharField(read_only=True)
+    bookings = TicketSerializer(source='tickets', many=True, read_only=True)
+    created_events = EventSerializer(source='events', many=True, read_only=True)
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'tickets']
+        fields = ['id','first_name', 'username', 'email', 'bookings', 'created_events']
+

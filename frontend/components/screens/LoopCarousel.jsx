@@ -49,9 +49,9 @@ function LoopCarousel() {
   };
 
   return (
-    <div className="bg-white">
-      <div className="wrapper "></div>
-      <div className="relative h-[calc(100vh-87px)] overflow-hidden bg-white flex items-center justify-center ">
+    <div className="bg-custom-gradient">
+      <div className="wrapper"></div>
+      <div className="relative h-[calc(100vh-87px)] overflow-hidden bg-custom-gradient flex items-center justify-center ">
         {/* 🔁 All Slides Positioned Absolutely */}
         {carouselImages.map((image, i) => (
           <div

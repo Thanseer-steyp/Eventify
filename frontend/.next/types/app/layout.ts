@@ -1,4 +1,4 @@
-// File: /home/user/Documents/Eventify/frontend/app/layout.js
+// File: C:\Users\thans\Desktop\Eventify\frontend\app\layout.js
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
