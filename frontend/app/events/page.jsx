@@ -291,9 +291,9 @@ const EventPage = () => {
           />
         </div>
 
-        <div className="p-3 space-y-1">
+        <div className="p-3 space-y-1.5">
           <h3
-            className={`text-lg font-semibold ${
+            className={`text-lg font-semibold mb-3 ${
               isPast ? "text-gray-400" : "text-black"
             }`}
           >
@@ -337,7 +337,7 @@ const EventPage = () => {
             {event.location}
           </p>
           <div
-            className={`rounded-md flex justify-between px-2 py-1 font-semibold ${
+            className={`rounded-md flex justify-between px-2 py-1 mt-3 font-semibold ${
               isPast ? "bg-red-600 text-white" : "bg-[#e5e5e5] text-black"
             }`}
           >
@@ -350,13 +350,13 @@ const EventPage = () => {
   };
 
   // Get display events based on showPastEvents toggle
-  const getDisplayEvents = (eventsList) => {
-    if (showPastEvents) {
-      return eventsList; // Show all events
-    } else {
-      return eventsList.filter((event) => !isEventPast(event)); // Show only upcoming events
-    }
-  };
+  // const getDisplayEvents = (eventsList) => {
+  //   if (showPastEvents) {
+  //     return eventsList; // Show all events
+  //   } else {
+  //     return eventsList.filter((event) => !isEventPast(event)); // Show only upcoming events
+  //   }
+  // };
 
   return (
     <>
@@ -549,7 +549,7 @@ const EventPage = () => {
                 SEARCH RESULTS
               </h2>
 
-              <div className="grid grid-cols-3 gap-8">
+              <div className="grid grid-cols-3 gap-15">
                 {sortEventsByDateTime(filteredEvents).map((event, index) =>
                   renderEventCard(event, index)
                 )}
@@ -575,7 +575,7 @@ const EventPage = () => {
               UPCOMING EVENTS
             </h2>
 
-            <div className="grid grid-cols-3 gap-8">
+            <div className="grid grid-cols-4 gap-7">
               {sortEventsByDateTime(
                 events.filter((event) => !isEventPast(event))
               ).map((event, index) => renderEventCard(event, index))}
@@ -594,7 +594,7 @@ const EventPage = () => {
                 PAST EVENTS
               </h2>
 
-              <div className="grid grid-cols-3 gap-8">
+              <div className="grid grid-cols-4 gap-7">
                 {sortEventsByDateTime(
                   events.filter((event) => isEventPast(event))
                 ).map((event, index) => renderEventCard(event, index))}

@@ -144,7 +144,7 @@ function CreateEventForm() {
               onChange={(e) =>
                 handleMonthYearChange(parseInt(e.target.value), selectedMonth)
               }
-              className="flex-1 bg-[#0f1b2a] text-white p-2 rounded border border-gray-600 focus:border-yellow-400"
+              className="flex-1 bg-[#0f1b2a] text-white p-2 rounded border border-gray-600 "
             >
               {years.map((year) => (
                 <option key={year} value={year}>
@@ -158,7 +158,7 @@ function CreateEventForm() {
               onChange={(e) =>
                 handleMonthYearChange(selectedYear, parseInt(e.target.value))
               }
-              className="flex-1 bg-[#0f1b2a] text-white p-2 rounded border border-gray-600 focus:border-yellow-400"
+              className="flex-1 bg-[#0f1b2a] text-white p-2 rounded border border-gray-600 "
             >
               {months.map((month, index) => {
                 // Disable past months for current year
@@ -178,7 +178,7 @@ function CreateEventForm() {
             <select
               value={selectedDate}
               onChange={(e) => setSelectedDate(parseInt(e.target.value))}
-              className="w-full bg-[#0f1b2a] text-white p-2 rounded border border-gray-600 focus:border-yellow-400"
+              className="w-full bg-[#0f1b2a] text-white p-2 rounded border border-gray-600 "
               size="6"
             >
               {validDates.map((date) => (
@@ -242,7 +242,7 @@ function CreateEventForm() {
           <select
             value={hour}
             onChange={(e) => setHour(e.target.value)}
-            className="bg-[#0f1b2a] text-white p-2 rounded border border-gray-600 focus:border-yellow-400"
+            className="bg-[#0f1b2a] text-white p-2 rounded border border-gray-600 "
           >
             {hours.map((h) => (
               <option key={h} value={h}>
@@ -257,7 +257,7 @@ function CreateEventForm() {
           <select
             value={minute}
             onChange={(e) => setMinute(e.target.value)}
-            className="bg-[#0f1b2a] text-white p-2 rounded border border-gray-600 focus:border-yellow-400"
+            className="bg-[#0f1b2a] text-white p-2 rounded border border-gray-600 "
           >
             {minutes
               .filter((_, i) => i % 5 === 0)
@@ -272,7 +272,7 @@ function CreateEventForm() {
           <select
             value={period}
             onChange={(e) => setPeriod(e.target.value)}
-            className="bg-[#0f1b2a] text-white p-2 rounded border border-gray-600 focus:border-yellow-400"
+            className="bg-[#0f1b2a] text-white p-2 rounded border border-gray-600 "
           >
             <option value="AM">AM</option>
             <option value="PM">PM</option>
@@ -395,19 +395,22 @@ function CreateEventForm() {
   };
 
   return (
-    <>
-      <form
-        onSubmit={handleSubmit}
-        encType="multipart/form-data"
-        className="min-h-screen bg-[#0b1c2d] py-10 px-4 md:px-20 text-white space-y-10"
-      >
-        <div className="wrapper">
+    <div className=" bg-custom-gradient">
+      <div className="wrapper flex py-12">
+        <div className="bg-white p-4 h-max">
+          <h2>hello</h2>
+        </div>
+        <form
+          onSubmit={handleSubmit}
+          encType="multipart/form-data"
+          className="min-h-screen text-white space-y-10"
+        >
           {/* Basic Information */}
-          <div className="bg-[#1a2a3a] rounded-xl p-8 shadow-lg mb-4">
-            <h2 className="text-2xl font-bold mb-1 text-white">
+          <div className="bg-white rounded-xl p-8 shadow-xl mb-4">
+            <h2 className="text-2xl font-bold mb-1 text-black">
               📌 Basic Information
             </h2>
-            <p className="text-sm text-gray-300 mb-6">
+            <p className="text-sm text-black mb-6">
               Let's start with the essential details about your event
             </p>
 
@@ -418,7 +421,7 @@ function CreateEventForm() {
                 value={formData.title}
                 onChange={handleChange}
                 placeholder="Enter your event title..."
-                className="w-full p-3 rounded-lg bg-[#0f1b2a] border border-gray-600 text-white placeholder-gray-400 focus:border-yellow-400 focus:outline-none"
+                className="w-full p-3 rounded-lg bg-gray-200 text-black placeholder-gray-500  focus:outline-none"
               />
               <textarea
                 name="description"
@@ -426,7 +429,7 @@ function CreateEventForm() {
                 value={formData.description}
                 onChange={handleChange}
                 placeholder="Describe your event..."
-                className="w-full p-3 rounded-lg bg-[#0f1b2a] border border-gray-600 text-white placeholder-gray-400 resize-none focus:border-yellow-400 focus:outline-none"
+                className="w-full p-3 rounded-lg bg-gray-200 text-black placeholder-gray-500 resize-none  focus:outline-none"
               />
               <div className="flex gap-4">
                 <input
@@ -434,7 +437,7 @@ function CreateEventForm() {
                   value={formData.category}
                   onChange={handleChange}
                   placeholder="Enter Category"
-                  className="w-1/2 p-3 rounded-lg bg-[#0f1b2a] border border-gray-600 text-white focus:border-yellow-400 focus:outline-none"
+                  className="w-1/2 p-3 rounded-lg bg-gray-200 text-black placeholder-gray-500  focus:outline-none"
                 />
                 <input
                   type="number"
@@ -442,18 +445,18 @@ function CreateEventForm() {
                   value={formData.maxAttendees}
                   onChange={handleChange}
                   placeholder="Maximum number of attendees"
-                  className="w-1/2 p-3 rounded-lg bg-[#0f1b2a] border border-gray-600 text-white placeholder-gray-400 focus:border-yellow-400 focus:outline-none"
+                  className="w-1/2 p-3 rounded-lg bg-gray-200 text-black placeholder-gray-500  focus:outline-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
                 />
               </div>
             </div>
           </div>
 
           {/* Date, Time & Location */}
-          <div className="bg-[#1a2a3a] rounded-xl p-8 shadow-lg mb-4">
-            <h2 className="text-2xl font-bold mb-1 text-white">
+          <div className="bg-white rounded-xl p-8 shadow-xl mb-4">
+            <h2 className="text-2xl font-bold mb-1 text-black">
               📅 Date, Time & Location
             </h2>
-            <p className="text-sm text-gray-300 mb-6">
+            <p className="text-sm text-black mb-6">
               When and where will your event take place?
             </p>
 
@@ -466,7 +469,7 @@ function CreateEventForm() {
                     setShowCustomDatePicker(!showCustomDatePicker);
                     setShowCustomTimePicker(false); // Close time picker if open
                   }}
-                  className="w-full p-3 rounded-lg bg-[#0f1b2a] border border-gray-600 text-left text-gray-400 focus:border-yellow-400 focus:outline-none hover:border-gray-500"
+                  className="w-full p-3 rounded-lg bg-gray-200 text-left text-gray-500  focus:outline-none hover:border-gray-500"
                 >
                   {displayDate || "Select date"}
                 </button>
@@ -481,7 +484,7 @@ function CreateEventForm() {
                     setShowCustomTimePicker(!showCustomTimePicker);
                     setShowCustomDatePicker(false); // Close date picker if open
                   }}
-                  className="w-full p-3 rounded-lg bg-[#0f1b2a] border border-gray-600 text-left text-gray-400 focus:border-yellow-400 focus:outline-none hover:border-gray-500"
+                  className="w-full p-3 rounded-lg bg-gray-200 text-left text-gray-500  focus:outline-none hover:border-gray-500"
                 >
                   {displayTime || "Select time"}
                 </button>
@@ -494,7 +497,7 @@ function CreateEventForm() {
                 placeholder="Duration in hours"
                 value={formData.duration}
                 onChange={handleChange}
-                className="w-full p-3 rounded-lg bg-[#0f1b2a] border border-gray-600 text-white focus:border-yellow-400 focus:outline-none"
+                className="w-full p-3 rounded-lg bg-gray-200 text-black  focus:outline-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
               />
             </div>
 
@@ -504,20 +507,20 @@ function CreateEventForm() {
               value={formData.location}
               onChange={handleChange}
               placeholder="Enter venue address or online platform..."
-              className="w-full p-3 rounded-lg bg-[#0f1b2a] border border-gray-600 text-white placeholder-gray-400 mt-4 focus:border-yellow-400 focus:outline-none"
+              className="w-full p-3 rounded-lg bg-gray-200 text-black placeholder-gray-500 mt-4 focus:outline-none"
             />
           </div>
 
           {/* Media & Details */}
-          <div className="bg-[#1a2a3a] rounded-xl p-8 shadow-lg mb-4">
-            <h2 className="text-2xl font-bold mb-1 text-white">
+          <div className="bg-white rounded-xl p-8 shadow-xl mb-4">
+            <h2 className="text-2xl font-bold mb-1 text-black">
               🖼️ Media & Details
             </h2>
-            <p className="text-sm text-gray-300 mb-6">
+            <p className="text-sm text-black mb-6">
               Add visual appeal and additional information
             </p>
 
-            <div className="bg-[#0f1b2a] border-2 border-dashed border-gray-500 rounded-lg p-6 text-center relative">
+            <div className="bg-gray-200 border-2 border-dashed border-gray-400 rounded-lg p-6 text-center relative">
               <input
                 type="file"
                 name="image"
@@ -525,16 +528,18 @@ function CreateEventForm() {
                 onChange={handleChange}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
               />
-              <p className="text-gray-400 pointer-events-none">
+              <p className="text-gray-500 pointer-events-none">
                 Click to upload an event image or drag and drop
               </p>
               <p className="text-xs text-gray-500 mt-1 pointer-events-none">
                 PNG, JPG up to 10MB
               </p>
               {formData.image && (
-                <p className="mt-3 text-sm text-gray-300">
+                <p className="mt-3 text-sm text-gray-500">
                   Selected image:{" "}
-                  <span className="text-yellow-300">{formData.image.name}</span>
+                  <span className="text-black text-md">
+                    {formData.image.name}
+                  </span>
                 </p>
               )}
             </div>
@@ -544,9 +549,10 @@ function CreateEventForm() {
                 type="number"
                 name="price"
                 value={formData.price}
+                step={50}
                 onChange={handleChange}
                 placeholder="Ticket price"
-                className="w-full p-3 rounded-lg bg-[#0f1b2a] border border-gray-600 text-white placeholder-gray-400 focus:border-yellow-400 focus:outline-none"
+                className="w-full p-3 rounded-lg bg-gray-200 text-black placeholder-gray-500  focus:outline-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
               />
               <input
                 type="text"
@@ -554,7 +560,7 @@ function CreateEventForm() {
                 value={formData.guest}
                 onChange={handleChange}
                 placeholder="Special guest? (optional)"
-                className="w-full p-3 rounded-lg bg-[#0f1b2a] border border-gray-600 text-white placeholder-gray-400 focus:border-yellow-400 focus:outline-none"
+                className="w-full p-3 rounded-lg bg-gray-200 text-black placeholder-gray-500  focus:outline-none"
               />
             </div>
           </div>
@@ -563,16 +569,16 @@ function CreateEventForm() {
           <div className="text-center pt-4">
             <button
               type="submit"
-              className="bg-yellow-400 text-[#131d30] font-bold py-3 px-8 rounded-md w-full hover:bg-yellow-500 transition-colors"
+              className="bg-[#131316] text-white font-bold py-3 px-8 rounded-md w-full shadow-xl hover:bg-black"
             >
               Create Event
             </button>
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
 
       <ToastContainer position="top-right" autoClose={3000} />
-    </>
+    </div>
   );
 }
 

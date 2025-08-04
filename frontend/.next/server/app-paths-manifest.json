@@ -1,7 +1,8 @@
 {
-  "/page": "app/page.js",
-  "/authentication/page": "app/authentication/page.js",
-  "/dashboard/page": "app/dashboard/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/events/create/page": "app/events/create/page.js",
   "/events/page": "app/events/page.js",
+  "/page": "app/page.js",
   "/events/[id]/page": "app/events/[id]/page.js"
 }

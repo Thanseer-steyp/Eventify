@@ -158,8 +158,8 @@ const EventDetailPage = () => {
 
           <div className="text-black">
             <h2 className="text-xl font-bold text-black">Special Guest</h2>
-            <div className="my-3 space-y-2">
-              <div>
+            <div className="my-3 flex gap-2 items-center">
+              <div className="rounded-full overflow-hidden">
                 <Image
                   src={event.guest_avatar || event.image}
                   alt={event.title}

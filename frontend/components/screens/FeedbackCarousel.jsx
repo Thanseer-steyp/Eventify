@@ -70,7 +70,7 @@ const TestimonialCarousel = () => {
   return (
     <div className="bg-[#f1f7fa] py-16">
       <div className="wrapper">
-      <h2 className="text-3xl font-bold text-sky-900 mb-4 text-center">Trusted by thousands of event organisers</h2>
+      <h2 className="text-3xl font-bold text-[#01517f] mb-4 text-center">Trusted by thousands of event organisers</h2>
       <p className="mb-6 text-gray-700 text-center">
         From small fundraisers to festivals, thousands of event organisers trust our event ticketing solution.
       </p>
