@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -17,6 +17,7 @@ function CreateEventForm() {
     location: "",
     price: "",
     guest: "",
+    guest_image: null,
     tags: "",
     image: null,
   };
@@ -26,6 +27,14 @@ function CreateEventForm() {
   const [displayDate, setDisplayDate] = useState("");
   const [showCustomTimePicker, setShowCustomTimePicker] = useState(false);
   const [showCustomDatePicker, setShowCustomDatePicker] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("access");
+    if (!token) {
+      setShowLoginModal(true);
+    }
+  }, []);
 
   // Get today's date
   const today = new Date();
@@ -338,6 +347,12 @@ function CreateEventForm() {
       "price",
     ];
 
+    const token = localStorage.getItem("access");
+    if (!token) {
+      toast.error("You must be logged in to create an event");
+      return;
+    }
+
     for (const field of requiredFields) {
       if (!formData[field]) {
         toast.error(`${field} is required`);
@@ -350,11 +365,7 @@ function CreateEventForm() {
       return;
     }
 
-    const token = localStorage.getItem("access");
-    if (!token) {
-      toast.error("You must be logged in to create an event");
-      return;
-    }
+    
 
     const data = new FormData();
     data.append("title", formData.title);
@@ -368,6 +379,7 @@ function CreateEventForm() {
     data.append("price", formData.price);
     data.append("guest", formData.guest);
     if (formData.image) data.append("image", formData.image);
+    if (formData.guest_image) data.append("guest_image", formData.guest_image);
 
     try {
       const res = await axios.post(
@@ -393,17 +405,53 @@ function CreateEventForm() {
       toast.error("Failed to create event. Check all fields and try again.");
     }
   };
+  const LoginWarningModal = ({ onClose }) => (
+    <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-[2px]">
+      <div className="bg-gray-100 p-6 max-w-sm w-full shadow-2xl text-center">
+        <h2 className="text-2xl font-bold mb-4 text-black">
+          🔒 Authentication Required
+        </h2>
+        <p className="text-gray-700 mb-6">
+          You need to be logged in to create an event. Please sign in to access
+          this feature and manage your events seamlessly.
+        </p>
+        <div className="flex justify-center gap-4">
+          <button
+            onClick={onClose}
+            className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded"
+          >
+            Close
+          </button>
+          <a
+            href="/authentication"
+            className="bg-sky-700 hover:bg-sky-900 text-white px-4 py-2 rounded"
+          >
+            Go to Login
+          </a>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className=" bg-custom-gradient">
-      <div className="wrapper flex py-12">
-        <div className="bg-white p-4 h-max">
-          <h2>hello</h2>
+      <div className="wrapper flex py-12 justify-between">
+        <div className="bg-[url('/bg.png')] bg-contain bg-center bg-[#01517f] bg-no-repeat w-[34%] shadow-xl rounded-xl p-4 h-max">
+          <h2 className="text-4xl font-extrabold text-center leading-tight">
+            Design Memorable Events With{" "}
+            <b className="logo text-yellow-400 text-[40px]">Eventify</b>
+          </h2>
+          <p className="font-semibold text-center mt-2">
+            Turn your ideas into unforgettable experiences with Eventify.
+            Whether you're hosting a corporate conference, a live concert, or a
+            birthday bash, our easy-to-use platform helps you craft and manage
+            events effortlessly.
+          </p>
         </div>
         <form
           onSubmit={handleSubmit}
           encType="multipart/form-data"
-          className="min-h-screen text-white space-y-10"
+          className="min-h-screen text-white space-y-10 w-[65%]"
         >
           {/* Basic Information */}
           <div className="bg-white rounded-xl p-8 shadow-xl mb-4">
@@ -563,19 +611,46 @@ function CreateEventForm() {
                 className="w-full p-3 rounded-lg bg-gray-200 text-black placeholder-gray-500  focus:outline-none"
               />
             </div>
+            <div className="bg-gray-200 border-2 border-dashed border-gray-400 rounded-lg p-6 text-center relative mt-6">
+            <input
+              type="file"
+              name="guest_image"
+              accept="image/png, image/jpeg"
+              onChange={handleChange}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+            />
+            <p className="text-gray-500 pointer-events-none">
+              Click to upload a guest image or drag and drop (optional)
+            </p>
+            <p className="text-xs text-gray-500 mt-1 pointer-events-none">
+              PNG, JPG up to 10MB
+            </p>
+            {formData.guest_image && (
+              <p className="mt-3 text-sm text-gray-500">
+                Guest image:{" "}
+                <span className="text-black text-md">
+                  {formData.guest_image.name}
+                </span>
+              </p>
+            )}
           </div>
+          </div>
+          
 
           {/* Submit */}
           <div className="text-center pt-4">
             <button
               type="submit"
-              className="bg-[#131316] text-white font-bold py-3 px-8 rounded-md w-full shadow-xl hover:bg-black"
+              className="bg-[#131316] cursor-pointer text-white font-bold py-3 px-8 rounded-md w-full shadow-xl hover:bg-black"
             >
               Create Event
             </button>
           </div>
         </form>
       </div>
+      {showLoginModal && (
+        <LoginWarningModal onClose={() => setShowLoginModal(false)} />
+      )}
 
       <ToastContainer position="top-right" autoClose={3000} />
     </div>

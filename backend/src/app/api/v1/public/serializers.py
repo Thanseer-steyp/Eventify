@@ -16,7 +16,7 @@ class EventSerializer(serializers.ModelSerializer):
             'date', 'time', 'duration', 'location', 'price',
             'guest', 'image', 'created_at', 'organizer',
             'organizer_email', 'total_bookings', 'max_attendees',
-            'tickets_sold', 'tickets_left',  
+            'tickets_sold', 'tickets_left',  'guest_image',
         ]
 
     def get_organizer(self, obj):

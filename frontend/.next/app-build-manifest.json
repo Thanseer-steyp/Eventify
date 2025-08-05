@@ -12,17 +12,23 @@
       "static/css/app/page.css",
       "static/chunks/app/page.js"
     ],
-    "/events/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/events/page.css",
-      "static/chunks/app/events/page.js"
-    ],
     "/events/create/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/css/app/events/create/page.css",
       "static/chunks/app/events/create/page.js"
+    ],
+    "/authentication/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/authentication/page.css",
+      "static/chunks/app/authentication/page.js"
+    ],
+    "/events/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/events/page.css",
+      "static/chunks/app/events/page.js"
     ],
     "/events/[id]/page": [
       "static/chunks/webpack.js",
@@ -30,10 +36,10 @@
       "static/css/app/events/[id]/page.css",
       "static/chunks/app/events/[id]/page.js"
     ],
-    "/_not-found/page": [
+    "/dashboard/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/_not-found/page.js"
+      "static/chunks/app/dashboard/page.js"
     ]
   }
 }

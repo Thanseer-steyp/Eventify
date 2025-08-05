@@ -361,7 +361,7 @@ const EventPage = () => {
   return (
     <>
       <div className="text-white min-h-screen">
-        <div className="w-full h-max space-y-6 bg-[url('/bg.png')] bg-contain bg-center bg-[#01517f]">
+        <div className="w-full h-max space-y-6 bg-[url('/bg.png')] bg-contain bg-center bg-[#01517f] bg-no-repeat">
           <div className="wrapper py-[150px]">
             <h2 className="text-[55px] text-center font-semibold mb-5">
               FIND AN EVENT & BUY TICKETS

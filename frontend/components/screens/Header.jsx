@@ -35,7 +35,6 @@ function Header() {
     setIsAuthenticated(false);
     // Notify other components
     window.dispatchEvent(new Event("login-status-changed"));
-    router.push("/authentication");
   };
 
   useEffect(() => {
@@ -56,7 +55,7 @@ function Header() {
           <h1>
             <Link href="/">
               <div className="flex items-center">
-                <div className="logo mr-4 text-3xl text-black">Eventify</div>
+                <div className="bg-[url('/bg.png')] bg-contain bg-center bg-[#01517f] bg-no-repeat logo mr-4 text-3xl text-white p-2">Eventify</div>
               </div>
             </Link>
           </h1>

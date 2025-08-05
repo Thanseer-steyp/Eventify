@@ -8,7 +8,7 @@ function Footer() {
         <h1>
           <Link href="/">
             <div className="flex items-center">
-              <div className="logo text-white text-3xl">Eventify</div>
+              <div className="logo text-white text-3xl border border-white p-2">Eventify</div>
             </div>
           </Link>
         </h1>

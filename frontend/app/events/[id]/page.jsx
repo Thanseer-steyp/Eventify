@@ -161,7 +161,7 @@ const EventDetailPage = () => {
             <div className="my-3 flex gap-2 items-center">
               <div className="rounded-full overflow-hidden">
                 <Image
-                  src={event.guest_avatar || event.image}
+                  src={event.guest_image || "/np2.png"}
                   alt={event.title}
                   width={50}
                   height={50}
@@ -445,58 +445,59 @@ const EventDetailPage = () => {
         </div>
 
         {showModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-[2px]">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className="bg-[#1a2942] border border-white p-6 rounded-xl w-[90%] max-w-md shadow-2xl"
+              className="bg-white p-6 max-w-md shadow-2xl"
             >
-              <h2 className="text-2xl font-semibold text-white mb-4">
+              <h2 className="text-2xl font-semibold mb-4 text-black">
                 Select Quantity
               </h2>
 
               {/* Quantity Selector */}
-              <div className="flex items-center justify-between bg-[#0f1b2a] p-3 rounded-lg">
+              <div className="flex items-center justify-between bg-gray-200 p-3 rounded-lg">
                 <button
                   onClick={decrement}
-                  className="text-white cursor-pointer text-xl font-bold px-3 py-1 bg-gray-700 rounded hover:bg-gray-600"
+                  className="text-black cursor-pointer text-xl font-bold px-3 py-1 bg-gray-300 rounded hover:bg-gray-400"
                 >
                   −
                 </button>
-                <span className="text-white text-2xl font-semibold">
+                <span className="text-black text-2xl font-semibold">
                   {quantity}
                 </span>
                 <button
                   onClick={increment}
-                  className="text-white text-xl font-bold px-3 py-1 bg-gray-700 cursor-pointer rounded hover:bg-gray-600"
+                  className="text-black text-xl font-bold px-3 py-1 bg-gray-300 cursor-pointer rounded hover:bg-gray-400"
                 >
                   +
                 </button>
               </div>
 
-              <p className="text-yellow-400 mt-4 text-lg font-semibold">
+              <p className="text-black mt-4 text-lg font-semibold">
                 Total: ₹{event.price * quantity}
               </p>
 
               {/* Fake Payment Section */}
               <div className="mt-6">
-                <label className="text-white font-medium block mb-2">
+                <label className="text-black font-medium block mb-2">
                   Choose Payment Method:
                 </label>
                 <select
                   value={paymentMethod}
                   onChange={(e) => setPaymentMethod(e.target.value)}
-                  className="appearance-none w-full p-2 rounded-md bg-[#0f1b2a] text-white border border-gray-600"
+                  className="appearance-none w-full p-2 rounded-md bg-gray-200 text-black focus:outline-none"
                 >
                   <option value="upi">UPI</option>
-                  <option value="card">Credit/Debit Card</option>
+                  <option value="card">Credit Card</option>
+                  <option value="card">Debit Card</option>
                   <option value="wallet">Wallet</option>
                 </select>
               </div>
               <div className="mt-6">
-                <label className="text-white font-medium block mb-2">
+                <label className="text-black font-medium block mb-2">
                   Enter 4-Digit PIN:
                 </label>
                 <div className="grid grid-cols-4 gap-8">
@@ -514,7 +515,7 @@ const EventDetailPage = () => {
                           handlePinChange(val, index);
                         }
                       }}
-                      className="text-xl h-14 text-center rounded-md bg-[#0f1b2a] border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                      className="text-xl h-14 text-center rounded-md bg-gray-200 text-black font-bold focus:outline-none focus:ring-2 focus:ring-black"
                     />
                   ))}
                 </div>
@@ -524,7 +525,7 @@ const EventDetailPage = () => {
               <div className="mt-6 flex justify-end space-x-4">
                 <button
                   onClick={closeModal}
-                  className="text-gray-300 cursor-pointer hover:text-white border border-gray-500 px-4 py-2 rounded-md"
+                  className="text-white cursor-pointer bg-gray-400 px-4 py-2 rounded-md hover:bg-gray-500"
                 >
                   Cancel
                 </button>
@@ -580,7 +581,7 @@ const EventDetailPage = () => {
           </div>
         )}
         {showTicketModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-60">
+          <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-[2px]">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}

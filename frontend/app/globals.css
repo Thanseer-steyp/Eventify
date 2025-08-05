@@ -220,7 +220,8 @@ body {
 .logo {
   font-family: Opal;
   font-weight: normal;
-  padding: 8px;
+  border-radius: 8px;
+  /* padding: 8px; */
 }
 
 ul, li {
