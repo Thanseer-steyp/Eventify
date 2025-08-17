@@ -1,6 +1,12 @@
 from django.contrib import admin
-from .models import Event, Booking
+from .models import Event, Booking, EventGallery
 
+class EventGalleryInline(admin.TabularInline):
+    model = EventGallery
 
-admin.site.register(Event)
+class EventAdmin(admin.ModelAdmin):
+    list_display = ('title', 'date', 'location')
+    inlines = [EventGalleryInline]
+    
+admin.site.register(Event, EventAdmin)
 admin.site.register(Booking)

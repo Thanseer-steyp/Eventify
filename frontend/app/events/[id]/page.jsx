@@ -2,10 +2,12 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion } from "framer-motion";
 import axios from "axios";
+import Skeleton1 from "../../../components/includes/Skeleton1";
 
 import Location from "../../../components/assets/location.svg";
 import Calender from "../../../components/assets/calendar.svg";
@@ -22,13 +24,14 @@ import crowd from "../../../components/assets/crowd.svg";
 
 const EventDetailPage = () => {
   const { id } = useParams();
+  const router = useRouter();
   const [event, setEvent] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+  const [showBookingModal, setShowBookingModal] = useState(false);
   const [animateModal, setAnimateModal] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [pin, setPin] = useState(["", "", "", ""]);
   const [paymentMethod, setPaymentMethod] = useState("upi");
-  const [ticketInfo, setTicketInfo] = useState(null);
+  const [bookingInfo, setBookingInfo] = useState(null);
   const [showTicketModal, setShowTicketModal] = useState(false);
 
   const handlePinChange = (value, index) => {
@@ -55,9 +58,9 @@ const EventDetailPage = () => {
   const isAuthenticated =
     typeof window !== "undefined" && !!localStorage.getItem("access");
 
-  const handleBuyTickets = () => {
+  const handleBooking = () => {
     if (!isAuthenticated) {
-      toast.error("You must be logged in to buy tickets");
+      router.push("/authentication");
       return;
     }
 
@@ -72,7 +75,7 @@ const EventDetailPage = () => {
       return;
     }
 
-    setShowModal(true);
+    setShowBookingModal(true);
     setTimeout(() => setAnimateModal(true), 20);
   };
 
@@ -81,7 +84,7 @@ const EventDetailPage = () => {
   const closeModal = () => {
     setAnimateModal(false);
     setTimeout(() => {
-      setShowModal(false);
+      setShowBookingModal(false);
       setQuantity(1); // reset quantity
       setPin(["", "", "", ""]); // reset PIN
       setPaymentMethod("upi"); // reset payment method
@@ -94,7 +97,7 @@ const EventDetailPage = () => {
         `http://localhost:8000/api/v1/public/events/${eventId}/`
       );
       const eventData = res.data;
-  
+
       return {
         ...eventData,
         numericPrice: Math.floor(Number(eventData.price)),
@@ -110,7 +113,6 @@ const EventDetailPage = () => {
     }
   };
 
-
   useEffect(() => {
     const getEvent = async () => {
       const eventData = await fetchEventById(id);
@@ -118,26 +120,34 @@ const EventDetailPage = () => {
     };
     getEvent();
   }, [id]);
-  
+
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
 
   useEffect(() => {
-    const shouldDisableScroll = showModal || showTicketModal;
+    const shouldDisableScroll = showBookingModal || showTicketModal;
 
     document.body.style.overflow = shouldDisableScroll ? "hidden" : "auto";
 
     return () => {
       document.body.style.overflow = "auto";
     };
-  }, [showModal, showTicketModal]);
+  }, [showBookingModal, showTicketModal]);
 
   if (!event) {
-    return (
-      <div className="bg-[#0B1C2D] text-white min-h-screen flex items-center justify-center">
-        <div className="text-center animate-pulse text-xl">
-          Loading event details...
-        </div>
-      </div>
-    );
+    return <Skeleton1 />;
   }
 
   return (
@@ -151,16 +161,14 @@ const EventDetailPage = () => {
             height={450}
             className="rounded-xl mb-6 w-full h-[450px] block"
           />
-
           {/* <h1 className="text-4xl font-bold mb-4">{event.title}</h1> */}
-
           {event.description && (
             <div className="text-black">
               <h2 className="text-xl font-bold mb-3">About This Event</h2>
               <p className="leading-relaxed text-l">{event.description}</p>
             </div>
           )}
-          <hr className="border border-[#f0f1f2] my-4" />
+          <hr className="border border-gray-200 my-4" />
           {(event.guest || event.guest_image) && (
             <div>
               <div className="text-black">
@@ -289,11 +297,10 @@ const EventDetailPage = () => {
             </ul>
           </div>
           <hr className="border border-[#f0f1f2] my-4" />
-
           <div>
-            <h2 className="text-xl font-bold text-black">Gallery</h2>
+            <h2 className="text-xl font-bold text-black mb-3">Gallery</h2>
             {event.gallery && event.gallery.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4">
+              <div className="grid grid-cols-4 gap-4">
                 {/* First image large */}
                 <div className="col-span-2 row-span-2">
                   <img
@@ -319,202 +326,402 @@ const EventDetailPage = () => {
               </p>
             )}
           </div>
-
           <hr className="border border-[#f0f1f2] my-4" />
-
           <div className="text-black">
-            <h2 className="text-xl font-bold text-black">Contact</h2>
-            <div className="my-3 space-y-2">
-              <p className="capitalize">➤ Organizer : {event.organizer}</p>
-              <p>
-                ➤ Email :{" "}
-                {event.organizer_email || `${event.organizer}@gmail.com`}
+            <h2 className="text-xl font-bold mb-3">Contact</h2>
+            <ul className="grid grid-cols-1 gap-4">
+              <li className="flex items-center">
+                <div className="w-[50px] h-[50px] bg-[#f3f3f5] p-3 rounded-lg flex items-center justify-center">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="text-gray-600"
+                  >
+                    <path
+                      d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <circle
+                      cx="12"
+                      cy="7"
+                      r="4"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-[#9ea2ac] text-xs">Organizer</p>
+                  <h6 className="font-medium capitalize">{event.organizer}</h6>
+                </div>
+              </li>
+              <li className="flex items-center">
+                <div className="w-[50px] h-[50px] bg-[#f3f3f5] p-3 rounded-lg flex items-center justify-center">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="text-gray-600"
+                  >
+                    <path
+                      d="m4 4 16 0c1.1 0 2 .9 2 2l0 12c0 1.1-.9 2-2 2l-16 0c-1.1 0-2-.9-2-2l0-12c0-1.1 .9-2 2-2z"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <polyline
+                      points="22,6 12,13 2,6"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-[#9ea2ac] text-xs">Email</p>
+                  <h6 className="font-medium">
+                    {event.organizer_email || `${event.organizer}@gmail.com`}
+                  </h6>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className=" w-[31%]">
+          <div className="h-max p-[18px] bg-white rounded-xl border border-[#e1e3e6]">
+            <h1 className="text-xl font-bold tracking-wide mb-4 text-black uppercase">
+              {event.title}
+            </h1>
+            <div className="space-y-2">
+              <p className="flex items-center text-gray-300">
+                <Image src={bookMark} alt="category" className="w-6 h-6 mr-2" />
+                <span className="ml-2 text-black font-semibold text-sm capitalize">
+                  {event.category}
+                </span>
+              </p>
+              <p className="flex items-center text-gray-300">
+                <Image src={Calender} alt="calender" className="w-6 h-6 mr-2" />
+                <span className="ml-2 text-black font-semibold text-sm capitalize">
+                  {(() => {
+                    const date = new Date(event.date);
+                    const day = date.toLocaleDateString("en-GB", {
+                      weekday: "short",
+                    }); // e.g. Sun
+                    const dd = date.toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                    }); // e.g. 03
+
+                    const month = months[date.getMonth()]; // always 3 letters
+                    return `${day} ${dd} ${month}`;
+                  })()}{" "}
+                  | {event.displayTime} onwards
+                </span>
+              </p>
+              <p className="flex items-center text-gray-300">
+                <Image src={Location} alt="location" className="w-6 h-6 mr-2" />
+                <span className="ml-2 text-black font-semibold text-sm capitalize">
+                  {event.location}
+                </span>
               </p>
             </div>
+            <hr className="w-full border border-[#e2e2e2] my-3" />
+            <div className="flex gap-10 justify-between">
+              <div>
+                <p className="text-[#555d6d] text-xs">Entry</p>
+                <span className="text-black font-bold text-xl">
+                  {event.price}
+                </span>
+              </div>
+
+              {bookingInfo ? (
+                <button
+                  onClick={() => setShowTicketModal(true)}
+                  className="bg-[#131316] cursor-pointer text-white px-5 py-2 rounded-md font-semibold"
+                >
+                  View Ticket
+                </button>
+              ) : (
+                <button
+                  className="bg-[#131316] cursor-pointer text-white px-5 py-2 rounded-md font-semibold"
+                  onClick={handleBooking}
+                >
+                  Buy Tickets
+                </button>
+              )}
+            </div>
           </div>
+          <div className="h-max p-[18px] bg-white rounded-xl border border-[#e1e3e6] mt-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="w-[40px] h-[40px] bg-[#f3f3f5] p-2 rounded-lg flex items-center justify-center mr-3">
+                  {event.tickets_left === 0 ? (
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="text-red-500"
+                    >
+                      <path
+                        d="M18 6L6 18"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M6 6L18 18"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  ) : (
+                    // Check icon for available tickets
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className={
+                        event.tickets_left < 10
+                          ? "text-red-500"
+                          : event.tickets_left < 25
+                          ? "text-orange-500"
+                          : "text-green-500"
+                      }
+                    >
+                      <path
+                        d="M9 12l2 2 4-4"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  )}
+                </div>
+                <div>
+                  <p className="text-[#9ea2ac] text-xs">Availability</p>
+                  <span className="text-black font-semibold">
+                    {event.tickets_left} tickets left
+                  </span>
+                </div>
+              </div>
 
-          {/* Tickets Progress Slider */}
-          {/* <div className="flex gap-1 items-center bg-[#0f1b2a] rounded-lg p-2 my-4">
-            <p className="whitespace-nowrap">Tickets: </p>
-            <div className="w-full bg-white bg-opacity-20 rounded-sm h-5 overflow-hidden flex justify-between items-center relative">
-              <div
-                className="h-full bg-yellow-400 text-xs font-semibold text-black text-right p-1 transition-all duration-300 ease-in-out"
-                style={{
-                  width: `${(event.tickets_sold / event.max_attendees) * 100}%`,
-                }}
-              ></div>
-              <span className="text-black mr-2 text-[12px] absolute right-0">
-                {event.tickets_left} Left
-              </span>
-            </div>
-          </div> */}
-
-          {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div className="bg-[#0f1b2a] p-4 rounded-lg">
-              <h3 className="font-semibold mb-2 text-yellow-400">
-                Event Details
-              </h3>
-              <div className="space-y-2 text-sm text-gray-300">
-                <p>
-                  <span className="font-medium">Max Attendees:</span>{" "}
-                  {event.max_attendees}
-                </p>
-                {event.duration && (
-                  <p>
-                    <span className="font-medium">Duration:</span>{" "}
-                    {event.duration} hours
-                  </p>
-                )}
+              {/* Progress indicator */}
+              <div className="w-16 h-16 relative">
+                <svg
+                  className="w-16 h-16 transform -rotate-90"
+                  viewBox="0 0 64 64"
+                >
+                  {/* Background circle */}
+                  <circle
+                    cx="32"
+                    cy="32"
+                    r="28"
+                    fill="none"
+                    stroke="#f3f3f5"
+                    strokeWidth="4"
+                  />
+                  {/* Progress circle */}
+                  <circle
+                    cx="32"
+                    cy="32"
+                    r="28"
+                    fill="none"
+                    stroke={
+                      event.tickets_left < 10
+                        ? "#ef4444"
+                        : event.tickets_left < 25
+                        ? "#f97316"
+                        : "#22c55e"
+                    }
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                    strokeDasharray={
+                      (event.tickets_left / event.max_attendees) * 175.93 +
+                      " 175.93"
+                    }
+                    className="transition-all duration-300 ease-in-out"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-xs font-bold text-black">
+                    {Math.round(
+                      (event.tickets_left / event.max_attendees) * 100
+                    )}
+                    %
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="bg-[#0f1b2a] p-4 rounded-lg">
-              <h3 className="font-semibold mb-2 text-yellow-400">Event Host</h3>
-              <div className="space-y-2 text-sm text-gray-300">
-                {event.organizer && (
-                  <p className="capitalize">
-                    <span className="font-medium">Organizer:</span>{" "}
-                    {event.organizer}
-                  </p>
-                )}
-                {event.special_guest && (
-                  <p className="capitalize">
-                    <span className="font-medium">Special Guest:</span>{" "}
-                    {event.special_guest}
-                  </p>
-                )}
-              </div>
-            </div>
-          </div> */}
-
-          {/* <div className="flex gap-4 flex-wrap">
-            <button
-              className="w-full bg-yellow-400 cursor-pointer text-black px-8 py-3 rounded-md font-semibold hover:bg-yellow-500 transition-colors duration-200 block w-full"
-              onClick={handleBuyTickets}
+            {/* Status indicator */}
+            <div
+              className={
+                "mt-2 w-max px-2 py-1 rounded-full text-xs font-medium " +
+                (event.tickets_left < 10
+                  ? "bg-red-100 text-red-700"
+                  : event.tickets_left < 25
+                  ? "bg-orange-100 text-orange-700"
+                  : "bg-green-100 text-green-700")
+              }
             >
-              Buy Tickets
-            </button>
-            {ticketInfo && (
-              <button
-                onClick={() => setShowTicketModal(true)}
-                className="bg-blue-500 w-full cursor-pointer text-white px-8 py-3 rounded-md font-semibold hover:bg-blue-600 transition-colors duration-200 block w-full mt-4"
-              >
-                View Ticket
-              </button>
-            )}
-          </div> */}
-        </div>
-        <div className="h-max p-[18px] w-[31%] bg-white rounded-xl border border-[#e1e3e6]">
-          <h1 className="text-xl font-bold tracking-wide mb-4 text-black uppercase">
-            {event.title}
-          </h1>
-          <div className="space-y-2">
-            <p className="flex items-center text-gray-300">
-              <Image src={bookMark} alt="category" className="w-6 h-6 mr-2" />
-              <span className="ml-2 text-black font-semibold text-sm capitalize">
-                {event.category}
-              </span>
-            </p>
-            <p className="flex items-center text-gray-300">
-              <Image src={Calender} alt="calender" className="w-6 h-6 mr-2" />
-              <span className="ml-2 text-black font-semibold text-sm capitalize">
-                {new Date(event.date).toLocaleDateString("en-GB", {
-                  weekday: "short", // "Sun", "Mon", etc.
-                  day: "2-digit", // "03"
-                  month: "short", // "Aug"
-                })}{" "}
-                | {event.displayTime} onwards
-              </span>
-            </p>
-            <p className="flex items-center text-gray-300">
-              <Image src={Location} alt="location" className="w-6 h-6 mr-2" />
-              <span className="ml-2 text-black font-semibold text-sm capitalize">
-                {event.location}
-              </span>
-            </p>
-          </div>
-          <hr className="w-full border border-[#e2e2e2] my-3" />
-          <div className="flex gap-10 items-center justify-between">
-            <div>
-              <p className="text-[#555d6d] text-xs">Starts from</p>
-              <span className="text-black font-bold text-xl">
-                {event.price}
-              </span>
+              {event.tickets_left == 0
+                ? "❌ Sold Out"
+                : event.tickets_left < 10
+                ? "🔥 Almost Sold Out"
+                : event.tickets_left < 25
+                ? "⚡ Limited Seats"
+                : "✅ Available"}
             </div>
-
-            {ticketInfo ? (
-              <button
-                onClick={() => setShowTicketModal(true)}
-                className="bg-[#131316] cursor-pointer text-white px-5 py-2 rounded-md font-semibold"
-              >
-                View Ticket
-              </button>
-            ) : (
-              <button
-                className="bg-[#131316] cursor-pointer text-white px-5 py-2 rounded-md font-semibold"
-                onClick={handleBuyTickets}
-              >
-                Buy Tickets
-              </button>
-            )}
           </div>
         </div>
 
-        {showModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-[2px]">
+        {/* Payment/Booking Modal */}
+        {showBookingModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 backdrop-blur-sm">
             <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className="bg-white p-6 max-w-md shadow-2xl"
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              className="bg-white rounded-2xl p-8 w-[35%] shadow-2xl border border-gray-100 overflow-y-auto"
             >
-              <h2 className="text-2xl font-semibold mb-4 text-black">
-                Select Quantity
-              </h2>
+              {/* Header */}
+
+              <div className="mb-3">
+                <h2 className="text-xl font-bold text-black mb-1 text-center">
+                  Book Tickets
+                </h2>
+                <p className="text-gray-500 text-sm text-center">
+                  {event.title}
+                </p>
+              </div>
 
               {/* Quantity Selector */}
-              <div className="flex items-center justify-between bg-gray-200 p-3 rounded-lg">
-                <button
-                  onClick={decrement}
-                  className="text-black cursor-pointer text-xl font-bold px-3 py-1 bg-gray-300 rounded hover:bg-gray-400"
-                >
-                  −
-                </button>
-                <span className="text-black text-2xl font-semibold">
-                  {quantity}
-                </span>
-                <button
-                  onClick={increment}
-                  className="text-black text-xl font-bold px-3 py-1 bg-gray-300 cursor-pointer rounded hover:bg-gray-400"
-                >
-                  +
-                </button>
+              <div className="mb-4">
+                <div className="flex items-center justify-center bg-gray-100 p-3 rounded-xl border border-gray-300">
+                  <button
+                    onClick={decrement}
+                    className="w-12 h-12 flex items-center justify-center bg-white border border-gray-300 rounded-xl hover:bg-gray-100 transition-colors shadow-sm"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M5 12h14"
+                        stroke="black"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  </button>
+                  <div className="mx-8 text-center">
+                    <span className="text-3xl font-bold text-black">
+                      {quantity}
+                    </span>
+                    <p className="text-xs text-gray-500 mt-1">Tickets</p>
+                  </div>
+                  <button
+                    onClick={increment}
+                    className="w-12 h-12 flex items-center justify-center bg-white border border-gray-300 rounded-xl hover:bg-gray-100 transition-colors shadow-sm"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M12 5v14M5 12h14"
+                        stroke="black"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  </button>
+                </div>
               </div>
 
-              <p className="text-black mt-4 text-lg font-semibold">
-                Total: ₹{(+event?.numericPrice || 0) * (+quantity || 0)}
-              </p>
+              {/* Price Summary */}
+              <div className="bg-gray-100 p-4 rounded-xl mb-6 border border-gray-300">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">
+                    Subtotal ({quantity} tickets)
+                  </span>
+                  <span className="font-semibold text-black">
+                    ₹{(+event?.numericPrice || 0) * (+quantity || 0)}
+                  </span>
+                </div>
+              </div>
 
-              {/* Fake Payment Section */}
-              <div className="mt-6">
-                <label className="text-black font-medium block mb-2">
-                  Choose Payment Method:
+              {/* Payment Method */}
+              <div className="mb-6">
+                <label className="text-black font-semibold text-sm mb-3 block">
+                  Payment Method
                 </label>
-                <select
-                  value={paymentMethod}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                  className="appearance-none w-full p-2 rounded-md bg-gray-200 text-black focus:outline-none"
-                >
-                  <option value="upi">UPI</option>
-                  <option value="card">Credit Card</option>
-                  <option value="card">Debit Card</option>
-                  <option value="wallet">Wallet</option>
-                </select>
+                <div className="relative">
+                  <select
+                    value={paymentMethod}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="appearance-none w-full p-2 rounded-md bg-gray-100 border border-gray-300 text-black focus:outline-none"
+                  >
+                    <option value="upi">UPI</option>
+                    <option value="card">Credit Card</option>
+                    <option value="card">Debit Card</option>
+                    <option value="wallet">Wallet</option>
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M6 9l6 6 6-6"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </div>
               </div>
-              <div className="mt-6">
-                <label className="text-black font-medium block mb-2">
-                  Enter 4-Digit PIN:
+
+              {/* PIN Entry */}
+              <div className="mb-8">
+                <label className="text-black font-semibold text-sm mb-3 block">
+                  Enter Security PIN
                 </label>
                 <div className="grid grid-cols-4 gap-8">
                   {pin.map((digit, index) => (
@@ -531,17 +738,17 @@ const EventDetailPage = () => {
                           handlePinChange(val, index);
                         }
                       }}
-                      className="text-xl h-14 text-center rounded-md bg-gray-200 text-black font-bold focus:outline-none focus:ring-2 focus:ring-black"
+                      className="text-xl h-14 text-center rounded-md border border-gray-300 bg-gray-100 text-black font-bold focus:outline-none focus:ring-2 focus:ring-black"
                     />
                   ))}
                 </div>
               </div>
 
-              {/* Confirm/Cancel */}
-              <div className="mt-6 flex justify-end space-x-4">
+              {/* Action Buttons */}
+              <div className="flex gap-4">
                 <button
                   onClick={closeModal}
-                  className="text-white cursor-pointer bg-gray-400 px-4 py-2 rounded-md hover:bg-gray-500"
+                  className="flex-1 p-3 text-white bg-red-600 border border-gray-300 rounded-xl font-semibold hover:bg-red-700 transition-colors"
                 >
                   Cancel
                 </button>
@@ -577,9 +784,13 @@ const EventDetailPage = () => {
                       );
 
                       const eventData = res.data;
-                      setTicketInfo(eventData);
-                      toast.success(`Payment completed`);
+                      setBookingInfo(eventData);
                       closeModal();
+                      toast.success("Payment completed successfully!");
+                      setEvent((prevEvent) => ({
+                        ...prevEvent,
+                        tickets_left: prevEvent.tickets_left - quantity,
+                      }));
                     } catch (error) {
                       console.error(
                         "Booking Error:",
@@ -588,77 +799,216 @@ const EventDetailPage = () => {
                       toast.error("Failed to book tickets. Please try again.");
                     }
                   }}
-                  className="bg-yellow-400 cursor-pointer text-black px-4 py-2 rounded-md font-semibold hover:bg-yellow-500"
+                  className="flex-1 p-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg"
                 >
-                  Pay Now
+                  Complete Payment
                 </button>
               </div>
             </motion.div>
           </div>
         )}
+
+        {/* Ticket Display Modal */}
         {showTicketModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-[2px]">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 backdrop-blur-sm">
             <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className="bg-[#1a2942] border border-white p-6 rounded-xl w-[90%] max-w-md shadow-2xl text-white"
+              initial={{ scale: 0, opacity: 0, rotateY: 90 }}
+              animate={{ scale: 1, opacity: 1, rotateY: 0 }}
+              exit={{ scale: 0, opacity: 0, rotateY: 90 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              className="bg-white rounded-3xl w-[35%] shadow-2xl overflow-hidden flex flex-col"
             >
-              <h2 className="text-2xl font-semibold mb-4">Your Ticket</h2>
-              <div className="space-y-3">
-                {ticketInfo.id && (
-                  <p>
-                    <span className="font-medium text-yellow-400">
-                      Booking ID:
-                    </span>{" "}
-                    #{ticketInfo.id}
-                  </p>
-                )}
-                <p>
-                  <span className="font-medium text-yellow-400">Event:</span>{" "}
-                  {event.title}
-                </p>
-                <p>
-                  <span className="font-medium text-yellow-400">
-                    Event Location:
-                  </span>{" "}
-                  {event.location}
-                </p>
-                <p>
-                  <span className="font-medium text-yellow-400">
-                    Booked Date:
-                  </span>{" "}
-                  {new Date(event.date).toLocaleDateString()}
-                </p>
-                <p>
-                  <span className="font-medium text-yellow-400">
-                    Booked Time:
-                  </span>{" "}
-                  {event.displayTime}
-                </p>
-                <p>
-                  <span className="font-medium text-yellow-400">
-                    Ticket Quantity:
-                  </span>{" "}
-                  {ticketInfo.quantity}
-                </p>
-                <p>
-                  <span className="font-medium text-yellow-400">
-                    Total Paid:
-                  </span>{" "}
-                  ₹{event.price * ticketInfo.quantity}
-                </p>
+              {/* Ticket Header */}
+              <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 text-white relative">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-2xl font-bold mb-1">Event Ticket</h2>
+                    <p className="text-blue-100 text-sm">Digital Pass</p>
+                  </div>
+                  <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                    <svg
+                      width="32"
+                      height="32"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M9 12l2 2 4-4M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"
+                        stroke="green"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </div>
               </div>
 
-              <div className="mt-6 flex justify-end">
+              {/* Perforated line effect */}
+
+              {/* Ticket Content */}
+              <div className="p-3 space-y-3 flex-1">
+                {/* Event Title */}
+                <div className="text-center border-b border-gray-100 pb-3">
+                  <h3 className="text-xl font-bold text-gray-800">
+                    {event.title}
+                  </h3>
+                  <p className="text-gray-500">{event.location}</p>
+                </div>
+
+                {/* Ticket Details Grid */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-rows-3 gap-4">
+                    {bookingInfo.id && (
+                      <div className="bg-gray-100 p-3 rounded-xl">
+                        <p className="text-xs text-gray-500 mb-1">Booking ID</p>
+                        <p className="font-bold text-gray-800">
+                          #{bookingInfo.id}
+                        </p>
+                      </div>
+                    )}
+                    <div className="bg-gray-100 p-3 rounded-xl">
+                      <p className="text-xs text-gray-500 mb-1">Date</p>
+                      <p className="font-bold text-gray-800">
+                        {new Date(event.date).toLocaleDateString("en-GB", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </p>
+                    </div>
+                    <div className="bg-gray-100 p-3 rounded-xl">
+                      <p className="text-xs text-gray-500 mb-1">Time</p>
+                      <p className="font-bold text-gray-800">
+                        {event.displayTime}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* QR Code Placeholder */}
+                  <div className="grid grid-rows-3 gap-4">
+                    <div className="bg-gray-100 p-3 rounded-xl row-span-1">
+                      <p className="text-xs text-gray-500 mb-1">Quantity</p>
+                      <p className="font-bold text-gray-800">
+                        {bookingInfo.quantity} Tickets
+                      </p>
+                    </div>
+                    <div className="bg-gray-100 p-6 rounded-xl text-center row-span-2">
+                      <div className="w-24 h-24 bg-gray-300 rounded-lg mx-auto flex items-center justify-center">
+                        <svg
+                          width="48"
+                          height="48"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <rect
+                            x="3"
+                            y="3"
+                            width="8"
+                            height="8"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          />
+                          <rect
+                            x="13"
+                            y="3"
+                            width="8"
+                            height="8"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          />
+                          <rect
+                            x="3"
+                            y="13"
+                            width="8"
+                            height="8"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          />
+                          <rect
+                            x="13"
+                            y="13"
+                            width="2"
+                            height="2"
+                            fill="currentColor"
+                          />
+                          <rect
+                            x="16"
+                            y="13"
+                            width="2"
+                            height="2"
+                            fill="currentColor"
+                          />
+                          <rect
+                            x="19"
+                            y="13"
+                            width="2"
+                            height="2"
+                            fill="currentColor"
+                          />
+                          <rect
+                            x="13"
+                            y="16"
+                            width="2"
+                            height="2"
+                            fill="currentColor"
+                          />
+                          <rect
+                            x="19"
+                            y="16"
+                            width="2"
+                            height="2"
+                            fill="currentColor"
+                          />
+                          <rect
+                            x="13"
+                            y="19"
+                            width="2"
+                            height="2"
+                            fill="currentColor"
+                          />
+                          <rect
+                            x="16"
+                            y="19"
+                            width="2"
+                            height="2"
+                            fill="currentColor"
+                          />
+                          <rect
+                            x="19"
+                            y="19"
+                            width="2"
+                            height="2"
+                            fill="currentColor"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Total Amount */}
+                <div className="bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-xl border border-green-200">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 font-medium">
+                      Total Paid
+                    </span>
+                    <span className="text-2xl font-bold text-green-600">
+                      ₹{event.numericPrice * bookingInfo.quantity}
+                    </span>
+                  </div>
+                </div>
                 <button
                   onClick={() => setShowTicketModal(false)}
-                  className="text-gray-300 hover:text-white border border-gray-500 px-4 py-2 rounded-md"
+                  className="w-full p-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-colors"
                 >
-                  Close
+                  Close Ticket
                 </button>
               </div>
+
+              {/* Close Button */}
             </motion.div>
           </div>
         )}

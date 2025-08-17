@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
-from rest_framework import status
+from rest_framework import status,generics
 from django.contrib.auth.models import User
 from general.models import Event, Booking
 from .serializers import TicketSerializer, UserProfileSerializer
@@ -49,3 +49,26 @@ class UserProfileView(APIView):
         events = Event.objects.filter(user=request.user).order_by("-created_at")
         serializer = UserProfileSerializer(request.user)
         return Response(serializer.data)
+
+
+class CancelBookingView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, booking_id):
+        try:
+            booking = Booking.objects.get(id=booking_id, user=request.user)
+        except Booking.DoesNotExist:
+            return Response({"error": "Booking not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        booking.delete()
+        return Response({"message": "Booking cancelled successfully"}, status=status.HTTP_200_OK)
+
+
+class EditEventView(generics.RetrieveUpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = EventSerializer
+    queryset = Event.objects.all()
+    lookup_field = 'id'
+
+    def get_queryset(self):
+        return Event.objects.filter(user=self.request.user)

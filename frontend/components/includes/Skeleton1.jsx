@@ -1,70 +1,25 @@
-"use client"; // Only needed if using in app/ directory with client features
-
 import React from "react";
 
 function SkeletonProduct() {
-  const shimmerStyle = {
-    background: "linear-gradient(90deg, #f0f0f0 25%, #e2e2e2 50%, #f0f0f0 75%)",
-    backgroundSize: "200% 100%",
-    animation: "shimmer 1.2s infinite",
-    borderRadius: "8px",
-    marginBottom: "16px",
-  };
-
-  const styles = {
-    skeletonBox: (height, width = "100%") => ({
-      ...shimmerStyle,
-      height,
-      width,
-    }),
-    container: {
-      display: "flex",
-      gap: "20px",
-      padding: "30px",
-    },
-    left: {
-      flex: 1,
-      display: "flex",
-      flexDirection: "column",
-      gap: "10px",
-    },
-    right: {
-      flex: 2,
-      display: "flex",
-      flexDirection: "column",
-      gap: "16px",
-    },
-  };
-
   return (
-    <>
-      {/* Keyframes for shimmer animation */}
-      <style>
-        {`
-          @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-          }
-        `}
-      </style>
+    <section className="flex gap-6 p-6 min-h-screen bg-gray-50">
+      {/* Left Side (Image & Small boxes) */}
+      <div className="flex-1 flex flex-col gap-3">
+        <div className="h-[300px] w-full bg-gray-200 rounded-lg animate-pulse" />
+        <div className="h-20 w-full bg-gray-200 rounded-lg animate-pulse" />
+        <div className="h-20 w-full bg-gray-200 rounded-lg animate-pulse" />
+      </div>
 
-      <section style={styles.container}>
-        <div style={styles.left}>
-          <div style={styles.skeletonBox("300px")} />
-          <div style={styles.skeletonBox("80px")} />
-          <div style={styles.skeletonBox("80px")} />
-        </div>
-
-        <div style={styles.right}>
-          <div style={styles.skeletonBox("32px", "70%")} />
-          <div style={styles.skeletonBox("20px", "50%")} />
-          <div style={styles.skeletonBox("20px", "40%")} />
-          <div style={styles.skeletonBox("20px", "60%")} />
-          <div style={styles.skeletonBox("20px", "30%")} />
-          <div style={styles.skeletonBox("40px", "30%")} />
-        </div>
-      </section>
-    </>
+      {/* Right Side (Text placeholders) */}
+      <div className="flex-2 flex flex-col gap-4 w-full">
+        <div className="h-8 w-3/4 bg-gray-200 rounded-md animate-pulse" />
+        <div className="h-5 w-1/2 bg-gray-200 rounded-md animate-pulse" />
+        <div className="h-5 w-2/5 bg-gray-200 rounded-md animate-pulse" />
+        <div className="h-5 w-3/5 bg-gray-200 rounded-md animate-pulse" />
+        <div className="h-5 w-1/3 bg-gray-200 rounded-md animate-pulse" />
+        <div className="h-10 w-1/3 bg-gray-200 rounded-md animate-pulse" />
+      </div>
+    </section>
   );
 }
 

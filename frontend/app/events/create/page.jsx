@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Shield } from "lucide-react";
 
 function CreateEventForm() {
   const initialFormData = {
@@ -66,18 +67,18 @@ function CreateEventForm() {
 
     // Month names
     const months = [
-      "January",
-      "February",
-      "March",
-      "April",
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
       "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
     ];
 
     // Get days in month
@@ -211,7 +212,7 @@ function CreateEventForm() {
           <button
             type="button"
             onClick={() => setShowCustomDatePicker(false)}
-            className="flex-1 bg-gray-600 text-white py-2 px-4 rounded font-semibold hover:bg-gray-700"
+            className="flex-1 bg-red-600 text-white py-2 px-4 rounded font-semibold hover:bg-red-700"
           >
             Cancel
           </button>
@@ -246,13 +247,13 @@ function CreateEventForm() {
     };
 
     return (
-      <div className="absolute top-full left-0 mt-1 bg-[#1a2a3a] border border-gray-600 rounded-lg p-4 shadow-lg z-20 w-full">
-        <div className="flex gap-2 items-center justify-center">
+      <div className="absolute top-full left-0 mt-1 bg-[#1a2a3a] border border-gray-600 rounded-lg p-3 shadow-lg z-20 w-full">
+        <div className="flex gap-1 items-center justify-between">
           {/* Hour selector */}
           <select
             value={hour}
             onChange={(e) => setHour(e.target.value)}
-            className="bg-[#0f1b2a] text-white p-2 rounded border border-gray-600 "
+            className="bg-[#0f1b2a] text-white px-1 py-2 rounded border border-gray-600 "
           >
             {hours.map((h) => (
               <option key={h} value={h}>
@@ -300,7 +301,7 @@ function CreateEventForm() {
           <button
             type="button"
             onClick={() => setShowCustomTimePicker(false)}
-            className="flex-1 bg-gray-600 text-white py-2 px-4 rounded font-semibold hover:bg-gray-700"
+            className="flex-1 bg-red-600 text-white py-2 px-4 rounded font-semibold hover:bg-red-700"
           >
             Cancel
           </button>
@@ -403,26 +404,25 @@ function CreateEventForm() {
       toast.error("Failed to create event. Check all fields and try again.");
     }
   };
-  const LoginWarningModal = ({ onClose }) => (
-    <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-[2px]">
-      <div className="bg-gray-100 p-6 max-w-sm w-full shadow-2xl text-center">
+  
+  const LoginWarningModal = () => (
+    <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm">
+      <div className="bg-white p-6 max-w-sm w-full shadow-2xl text-center">
+        <div className="flex justify-center mb-6">
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+              <Shield className="w-8 h-8 text-blue-600" />
+            </div>
+          </div>
         <h2 className="text-2xl font-bold mb-4 text-black">
-          🔒 Authentication Required
+          Authentication Required
         </h2>
         <p className="text-gray-700 mb-6">
-          You need to be logged in to create an event. Please sign in to access
-          this feature and manage your events seamlessly.
+          You need to be logged in to create an event
         </p>
         <div className="flex justify-center gap-4">
-          <button
-            onClick={onClose}
-            className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded"
-          >
-            Close
-          </button>
           <a
             href="/authentication"
-            className="bg-sky-700 hover:bg-sky-900 text-white px-4 py-2 rounded"
+            className="bg-blue-600 hover:bg-blue-700 w-full text-white px-4 py-2 rounded"
           >
             Go to Login
           </a>
@@ -515,7 +515,9 @@ function CreateEventForm() {
                     setShowCustomDatePicker(!showCustomDatePicker);
                     setShowCustomTimePicker(false); // Close time picker if open
                   }}
-                  className="w-full p-3 rounded-lg bg-gray-200 text-left text-gray-500  focus:outline-none hover:border-gray-500"
+                  className={`w-full p-3 rounded-lg bg-gray-200 text-left focus:outline-none hover:border-gray-500 ${
+                    displayDate ? "text-black" : "text-gray-500"
+                  }`}
                 >
                   {displayDate || "Select date"}
                 </button>
@@ -530,7 +532,9 @@ function CreateEventForm() {
                     setShowCustomTimePicker(!showCustomTimePicker);
                     setShowCustomDatePicker(false); // Close date picker if open
                   }}
-                  className="w-full p-3 rounded-lg bg-gray-200 text-left text-gray-500  focus:outline-none hover:border-gray-500"
+                  className={`w-full p-3 rounded-lg bg-gray-200 text-left focus:outline-none hover:border-gray-500 ${
+                    displayTime ? "text-black" : "text-gray-500"
+                  }`}
                 >
                   {displayTime || "Select time"}
                 </button>
@@ -671,7 +675,7 @@ function CreateEventForm() {
           </div>
 
           {/* Submit */}
-          <div className="text-center pt-4">
+          <div className="text-center">
             <button
               type="submit"
               className="bg-[#131316] cursor-pointer text-white font-bold py-3 px-8 rounded-md w-full shadow-xl hover:bg-black"

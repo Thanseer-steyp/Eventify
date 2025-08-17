@@ -8,6 +8,7 @@ class EventSerializer(serializers.ModelSerializer):
     tickets_left = serializers.SerializerMethodField()
     tickets_sold = serializers.SerializerMethodField()
     total_bookings = serializers.SerializerMethodField()
+    gallery = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
@@ -16,7 +17,7 @@ class EventSerializer(serializers.ModelSerializer):
             'date', 'time', 'duration', 'location', 'price',
             'guest', 'image', 'created_at', 'organizer',
             'organizer_email', 'total_bookings', 'max_attendees',
-            'tickets_sold', 'tickets_left',  'guest_image',
+            'tickets_sold', 'tickets_left',  'guest_image','gallery',
         ]
 
     def get_organizer(self, obj):
@@ -33,3 +34,10 @@ class EventSerializer(serializers.ModelSerializer):
 
     def get_total_bookings(self, obj):
         return obj.booking_set.count()
+
+    def get_gallery(self, obj):
+        request = self.context.get('request')
+        return [
+            request.build_absolute_uri(img.image.url) if request else img.image.url
+            for img in obj.gallery_images.all()
+        ]

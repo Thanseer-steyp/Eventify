@@ -4,7 +4,18 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+class EventGallery(models.Model):
+    event = models.ForeignKey(
+        'Event', 
+        on_delete=models.CASCADE, 
+        related_name='gallery_images'
+    )
+    image = models.ImageField(upload_to='event_gallery/')
 
+    def __str__(self):
+        return f"Gallery image for {self.event.title}"
+
+        
 class Event(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='events')

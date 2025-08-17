@@ -11,6 +11,8 @@ import Clock from "../../components/assets/clock.svg";
 import Location from "../../components/assets/location.svg";
 import Calender from "../../components/assets/calendar.svg";
 
+
+
 const EventPage = () => {
   const [location, setLocation] = useState("");
   const [filtersApplied, setFiltersApplied] = useState(false);
@@ -270,8 +272,8 @@ const EventPage = () => {
       >
         <div className="w-full block h-[150px] relative">
           {isPast && (
-            <div className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 rounded text-xs font-bold z-10">
-              PAST
+            <div className="absolute top-2 left-2 bg-red-600 px-3 py-1 rounded-full text-xs font-medium z-10">
+              Ended
             </div>
           )}
           <Image
@@ -330,11 +332,15 @@ const EventPage = () => {
           </p>
           <div
             className={`rounded-md flex justify-between px-2 py-1 mt-3 font-semibold ${
-              isPast ? "bg-red-600 text-white" : "bg-[#e5e5e5] text-black"
+              isPast ? "bg-red-600 text-white justify-center" : "bg-[#e5e5e5] text-black"
             }`}
           >
-            <span className="text-md">{event.price}</span>
-            <span>|{isPast ? " Event Ended" : "  Book Now"}</span>
+            <span className="text-md">{isPast ? "" : event.price}</span>
+            <span>
+  {isPast ? "Event Ended" : "| Book Now"}
+</span>
+
+
           </div>
         </div>
       </Link>

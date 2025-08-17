@@ -1,16 +1,21 @@
 "use client";
 
 import Link from "next/link";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 function Header() {
   const pathname = usePathname();
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [userInitial, setUserInitial] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const loadUser = () => {
-
     const firstName = localStorage.getItem("first_name");
     const username = localStorage.getItem("username");
     const token = localStorage.getItem("access");
@@ -28,6 +33,44 @@ function Header() {
     setUserInitial(initial);
     setIsAuthenticated(!!token);
   };
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      setShowSuggestions(false);
+      setSearchQuery("");
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
+
+  const fetchSuggestions = async (query) => {
+    try {
+      const res = await axios.get(
+        "http://localhost:8000/api/v1/public/events/",
+        {
+          params: { q: query },
+        }
+      );
+      setSuggestions(res.data.slice(0, 5));
+      setShowSuggestions(true);
+    } catch (err) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      if (searchQuery.trim()) {
+        fetchSuggestions(searchQuery);
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    }, 200);
+
+    return () => clearTimeout(delay);
+  }, [searchQuery]);
 
   const handleLogout = () => {
     localStorage.clear();
@@ -100,26 +143,61 @@ function Header() {
                 Create Events
               </Link>
             </li>
-            {isAuthenticated && (
-              <li
-                onClick={handleLogout}
-                className="text-black cursor-pointer hover:text-red-500 text-sm"
-              >
-                Logout
-              </li>
-            )}
           </ul>
 
           {/* Search & Avatar */}
           <div className="flex items-center gap-3">
             {/* Search Bar */}
-            <div className="flex items-center gap-2 border border-gray-400 p-3 rounded-lg w-[400px]">
-              <img src="/glass.svg" alt="Search" className="w-5" />
-              <input
-                type="text"
-                className="focus:outline-none w-full text-black"
-                placeholder="Search for events, shows and programmes"
-              />
+            <div className="relative w-[400px]">
+              <div className="flex items-center gap-2 border border-gray-400 p-3 rounded-lg bg-white">
+                <img src="/glass.svg" alt="Search" className="w-5" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search for events, shows and programmes"
+                  className="focus:outline-none w-full text-black"
+                />
+              </div>
+
+              {/* Dropdown suggestions */}
+              {showSuggestions && (
+                <div className="absolute w-full bg-white border border-gray-300 shadow-lg mt-1 rounded-lg z-50">
+                  {suggestions.length > 0 ? (
+                    suggestions.map((event) => (
+                      <div
+                        key={event.id}
+                        onClick={() => router.push(`/events/${event.id}`)}
+                        className="flex items-center gap-3 p-2 hover:bg-gray-100 cursor-pointer"
+                      >
+                        {event.image && (
+                          <img
+                            src={`http://localhost:8000${event.image}`}
+                            alt={event.title}
+                            className="w-12 h-12 object-cover rounded"
+                          />
+                        )}
+                        <div>
+                          <p className="font-medium  text-[14px] text-black">
+                            {event.title}
+                          </p>
+                          <p className="text-[12px] text-black">
+                            {event.location} •{" "}
+                            {new Date(event.date).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                            })}
+                          </p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-3 text-sm text-gray-500 text-center">
+                      No matching events found
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Avatar */}
