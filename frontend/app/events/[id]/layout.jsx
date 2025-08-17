@@ -1,12 +1,16 @@
+import axios from "axios";
+
 export async function generateMetadata({ params }) {
-  const res = await fetch(
+  const res = await axios.get(
     `http://localhost:8000/api/v1/public/events/${params.id}`,
     {
-      cache: "no-store",
+      headers: {
+        "Cache-Control": "no-store",
+      },
     }
   );
 
-  const event = await res.json();
+  const event = res.data;
   return {
     title: `Eventify | ${event.title}`,
   };
