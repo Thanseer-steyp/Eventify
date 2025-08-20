@@ -53,3 +53,13 @@ class Booking(models.Model):
 
 
 
+class Ticket(models.Model):
+    booking = models.ForeignKey(Booking, on_delete=models.CASCADE, related_name="tickets")
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    ticket_number = models.PositiveIntegerField()
+
+    class Meta:
+        unique_together = ('event', 'ticket_number')  # Ensure unique ticket numbers per event
+
+    def __str__(self):
+        return f"Ticket #{self.ticket_number} for {self.event.title}"

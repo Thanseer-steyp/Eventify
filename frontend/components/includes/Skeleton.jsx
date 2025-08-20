@@ -1,9 +1,9 @@
 "use client";
 
-export default function WaitingSkeleton() {
+function WaitingSkeleton() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50">
-      <div className="flex flex-col items-center gap-6">
+    <div className="min-h-[90vh] flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50">
+      <div className="flex flex-col items-center gap-4">
         {/* Circle avatar skeleton */}
         <div className="h-20 w-20 rounded-full bg-slate-200 animate-pulse" />
 
@@ -23,3 +23,5 @@ export default function WaitingSkeleton() {
     </div>
   );
 }
+
+export default  WaitingSkeleton;

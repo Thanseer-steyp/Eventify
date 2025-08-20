@@ -809,10 +809,10 @@ function UserDashboard() {
     <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-[2px]">
       <div className="bg-white p-6 max-w-sm w-full shadow-2xl text-center">
         <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-              <Shield className="w-8 h-8 text-blue-600" />
-            </div>
+          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+            <Shield className="w-8 h-8 text-blue-600" />
           </div>
+        </div>
         <h2 className="text-2xl font-bold mb-4 text-black">
           Authentication Required
         </h2>
@@ -1042,8 +1042,8 @@ function UserDashboard() {
                                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                               />
                             </svg>
+
                             <span>
-                              Date:{" "}
                               {(() => {
                                 const date = new Date(booking.event_date);
                                 const dd = date.toLocaleDateString("en-GB", {
@@ -1051,25 +1051,27 @@ function UserDashboard() {
                                 });
                                 const month = months[date.getMonth()];
                                 const yyyy = date.getFullYear();
-                                return `${dd} ${month} ${yyyy}`;
-                              })()}{" "}
+
+                                // Convert event.time (e.g., "17:00:00") into 12-hour format
+                                let timeString = "";
+                                if (booking.event_time) {
+                                  const [hours, minutes] =
+                                    booking.event_time.split(":");
+                                  const dateTime = new Date();
+                                  dateTime.setHours(hours, minutes);
+                                  timeString = dateTime.toLocaleTimeString(
+                                    "en-US",
+                                    {
+                                      hour: "numeric",
+                                      minute: "2-digit",
+                                      hour12: true,
+                                    }
+                                  );
+                                }
+
+                                return `${dd} ${month} ${yyyy} • ${timeString}`;
+                              })()}
                             </span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <svg
-                              className="w-4 h-4 text-gray-400"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"
-                              />
-                            </svg>
-                            <span>Quantity: {booking.quantity}</span>
                           </div>
                           <div className="flex items-center space-x-2">
                             <svg
@@ -1086,6 +1088,45 @@ function UserDashboard() {
                               />
                             </svg>
                             <span>Booking ID: #{booking.id}</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="#99a1af"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              class="lucide lucide-ticket-check-icon lucide-ticket-check"
+                            >
+                              <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+                              <path d="m9 12 2 2 4-4" />
+                            </svg>
+                            <span>{booking.quantity} Tickets</span>
+                          </div>
+
+                          <div className="flex items-center space-x-2">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="#99a1af"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              class="lucide lucide-ticket-icon lucide-ticket"
+                            >
+                              <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+                              <path d="M13 5v2" />
+                              <path d="M13 17v2" />
+                              <path d="M13 11v2" />
+                            </svg>
+                            <span>Tickets ID: {booking.tickets_id}</span>
                           </div>
                         </div>
                       </div>
@@ -1224,7 +1265,7 @@ function UserDashboard() {
                           <svg
                             className="w-4 h-4 text-gray-400"
                             fill="none"
-                            stroke="currentColor"
+                            stroke="#99a1af"
                             viewBox="0 0 24 24"
                           >
                             <path
@@ -1235,23 +1276,39 @@ function UserDashboard() {
                             />
                           </svg>
                           <span>
-                            Date:{" "}
                             {(() => {
                               const date = new Date(event.date);
                               const dd = date.toLocaleDateString("en-GB", {
                                 day: "2-digit",
-                              }); // e.g. "03"
-                              const month = months[date.getMonth()]; // always 3 letters
-                              const yyyy = date.getFullYear(); // e.g. "2025"
-                              return `${dd} ${month} ${yyyy}`;
-                            })()}{" "}
+                              });
+                              const month = months[date.getMonth()];
+                              const yyyy = date.getFullYear();
+
+                              // Convert event.time (e.g., "17:00:00") into 12-hour format
+                              let timeString = "";
+                              if (event.time) {
+                                const [hours, minutes] = event.time.split(":");
+                                const dateTime = new Date();
+                                dateTime.setHours(hours, minutes);
+                                timeString = dateTime.toLocaleTimeString(
+                                  "en-US",
+                                  {
+                                    hour: "numeric",
+                                    minute: "2-digit",
+                                    hour12: true,
+                                  }
+                                );
+                              }
+
+                              return `${dd} ${month} ${yyyy} • ${timeString}`;
+                            })()}
                           </span>
                         </div>
                         <div className="flex items-center space-x-2">
                           <svg
                             className="w-4 h-4 text-gray-400"
                             fill="none"
-                            stroke="currentColor"
+                            stroke="#99a1af"
                             viewBox="0 0 24 24"
                           >
                             <path
@@ -1267,7 +1324,7 @@ function UserDashboard() {
                               d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                             />
                           </svg>
-                          <span className="truncate">{event.location}</span>
+                          <span>{event.location}</span>
                         </div>
                         <div className="flex items-center space-x-2">
                           <svg
@@ -1276,7 +1333,7 @@ function UserDashboard() {
                             height="16"
                             viewBox="0 0 24 24"
                             fill="none"
-                            stroke="gray"
+                            stroke="#99a1af"
                             stroke-width="2"
                             stroke-linecap="round"
                             stroke-linejoin="round"
@@ -1288,7 +1345,77 @@ function UserDashboard() {
                             <path d="M6 13h3" />
                             <path d="M9 13c6.667 0 6.667-10 0-10" />
                           </svg>
-                          <span>{event.price}</span>
+                          <span>
+                            {Number(event.price) === 0
+                              ? "Free"
+                              : `₹${event.price}`}
+                          </span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="#99a1af"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="lucide lucide-square-check-big-icon lucide-square-check-big"
+                          >
+                            <path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344" />
+                            <path d="m9 11 3 3L22 4" />
+                          </svg>
+                          <span>
+                            {event.total_bookings === 0
+                              ? "No Bookings Confirmed"
+                              : `${event.total_bookings} Bookings Confirmed`}
+                          </span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="#99a1af"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="lucide lucide-ticket-check-icon lucide-ticket-check"
+                          >
+                            <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+                            <path d="m9 12 2 2 4-4" />
+                          </svg>
+                          <span>
+                            {event.tickets_sold === 0
+                              ? "No Tickets Sold"
+                              : `${event.tickets_sold} Tickets Sold`}
+                          </span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="#99a1af"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="lucide lucide-ticket-minus-icon lucide-ticket-minus"
+                          >
+                            <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+                            <path d="M9 12h6" />
+                          </svg>
+                          <span>
+                            {event.tickets_left === 0
+                              ? "Sold Out"
+                              : `${event.tickets_left} Tickets Left`}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -1312,6 +1439,8 @@ function UserDashboard() {
                         year: "numeric",
                         month: "short",
                         day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
                       })}
                     </div>
                     <button

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion } from "framer-motion";
+import { X } from "lucide-react";
 import axios from "axios";
 import Skeleton1 from "../../../components/includes/Skeleton1";
 
@@ -607,7 +608,7 @@ const EventDetailPage = () => {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0, opacity: 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              className="bg-white rounded-2xl p-8 w-[35%] shadow-2xl border border-gray-100 overflow-y-auto"
+              className="bg-white rounded-2xl p-8 w-[25%] shadow-2xl border border-gray-100 overflow-y-auto"
             >
               {/* Header */}
 
@@ -810,205 +811,131 @@ const EventDetailPage = () => {
 
         {/* Ticket Display Modal */}
         {showTicketModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 backdrop-blur-xl">
             <motion.div
               initial={{ scale: 0, opacity: 0, rotateY: 90 }}
               animate={{ scale: 1, opacity: 1, rotateY: 0 }}
               exit={{ scale: 0, opacity: 0, rotateY: 90 }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              className="bg-white rounded-3xl w-[35%] shadow-2xl overflow-hidden flex flex-col"
+              className="bg-white rounded-xl shadow-2xl w-full max-w-sm mx-auto overflow-hidden relative flex flex-col"
             >
-              {/* Ticket Header */}
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 text-white relative">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="text-2xl font-bold mb-1">Event Ticket</h2>
-                    <p className="text-blue-100 text-sm">Digital Pass</p>
-                  </div>
-                  <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                    <svg
-                      width="32"
-                      height="32"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M9 12l2 2 4-4M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"
-                        stroke="green"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </div>
+              {/* Close button */}
+
+              {/* Movie poster/header image */}
+              <div className="h-32 bg-gradient-to-br from-slate-700 via-slate-600 to-slate-800 relative overflow-hidden">
+                <img src={event.image} alt={event.title} />
+              </div>
+
+              {/* Movie details header */}
+              <div className="p-4">
+                <div className="bg-white border-b border-dashed border-gray-200 pb-4">
+                <h2 className="text-lg font-semibold text-gray-800 mb-2">
+                  {event.title}
+                </h2>
+                <div className="flex gap-2 items-center mb-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#99a1af"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-calendar-clock-icon lucide-calendar-clock"
+                  >
+                    <path d="M16 14v2.2l1.6 1" />
+                    <path d="M16 2v4" />
+                    <path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5" />
+                    <path d="M3 10h5" />
+                    <path d="M8 2v4" />
+                    <circle cx="16" cy="16" r="6" />
+                  </svg>
+                  <p className="text-sm text-gray-500">
+                    {new Date(event.date).toLocaleDateString("en-GB", {
+                      weekday: "short",
+                      day: "2-digit",
+                      month: "short",
+                    })}{" "}
+                    | {event.displayTime}
+                  </p>
+                </div>
+                <div className="flex gap-2 items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#99a1af"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-map-pin-icon lucide-map-pin"
+                  >
+                    <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  <p className="text-sm text-gray-500">{event.location}</p>
+                </div>
                 </div>
               </div>
 
-              {/* Perforated line effect */}
-
-              {/* Ticket Content */}
-              <div className="p-3 space-y-3 flex-1">
-                {/* Event Title */}
-                <div className="text-center border-b border-gray-100 pb-3">
-                  <h3 className="text-xl font-bold text-gray-800">
-                    {event.title}
-                  </h3>
-                  <p className="text-gray-500">{event.location}</p>
-                </div>
-
-                {/* Ticket Details Grid */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid grid-rows-3 gap-4">
-                    {bookingInfo.id && (
-                      <div className="bg-gray-100 p-3 rounded-xl">
-                        <p className="text-xs text-gray-500 mb-1">Booking ID</p>
-                        <p className="font-bold text-gray-800">
-                          #{bookingInfo.id}
-                        </p>
-                      </div>
-                    )}
-                    <div className="bg-gray-100 p-3 rounded-xl">
-                      <p className="text-xs text-gray-500 mb-1">Date</p>
-                      <p className="font-bold text-gray-800">
-                        {new Date(event.date).toLocaleDateString("en-GB", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        })}
-                      </p>
-                    </div>
-                    <div className="bg-gray-100 p-3 rounded-xl">
-                      <p className="text-xs text-gray-500 mb-1">Time</p>
-                      <p className="font-bold text-gray-800">
-                        {event.displayTime}
-                      </p>
-                    </div>
+              {/* Main content */}
+              <div className="p-4">
+                {/* Ticket info and QR code */}
+                <div className="flex items-center gap-3 mb-3">
+                  {/* QR Code */}
+                  <div className="w-[30%] flex-shrink-0">
+                    <img src="/localQr.png" alt="QR Code" className="w-full" />
                   </div>
 
-                  {/* QR Code Placeholder */}
-                  <div className="grid grid-rows-3 gap-4">
-                    <div className="bg-gray-100 p-3 rounded-xl row-span-1">
-                      <p className="text-xs text-gray-500 mb-1">Quantity</p>
-                      <p className="font-bold text-gray-800">
-                        {bookingInfo.quantity} Tickets
-                      </p>
-                    </div>
-                    <div className="bg-gray-100 p-6 rounded-xl text-center row-span-2">
-                      <div className="w-24 h-24 bg-gray-300 rounded-lg mx-auto flex items-center justify-center">
-                        <svg
-                          width="48"
-                          height="48"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <rect
-                            x="3"
-                            y="3"
-                            width="8"
-                            height="8"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          />
-                          <rect
-                            x="13"
-                            y="3"
-                            width="8"
-                            height="8"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          />
-                          <rect
-                            x="3"
-                            y="13"
-                            width="8"
-                            height="8"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          />
-                          <rect
-                            x="13"
-                            y="13"
-                            width="2"
-                            height="2"
-                            fill="currentColor"
-                          />
-                          <rect
-                            x="16"
-                            y="13"
-                            width="2"
-                            height="2"
-                            fill="currentColor"
-                          />
-                          <rect
-                            x="19"
-                            y="13"
-                            width="2"
-                            height="2"
-                            fill="currentColor"
-                          />
-                          <rect
-                            x="13"
-                            y="16"
-                            width="2"
-                            height="2"
-                            fill="currentColor"
-                          />
-                          <rect
-                            x="19"
-                            y="16"
-                            width="2"
-                            height="2"
-                            fill="currentColor"
-                          />
-                          <rect
-                            x="13"
-                            y="19"
-                            width="2"
-                            height="2"
-                            fill="currentColor"
-                          />
-                          <rect
-                            x="16"
-                            y="19"
-                            width="2"
-                            height="2"
-                            fill="currentColor"
-                          />
-                          <rect
-                            x="19"
-                            y="19"
-                            width="2"
-                            height="2"
-                            fill="currentColor"
-                          />
-                        </svg>
-                      </div>
-                    </div>
+                  {/* Booking Info */}
+                  <div className="flex-1 space-y-1.5">
+                    <p className="text-sm text-gray-800 font-medium">
+                      BOOKING ID: #{bookingInfo.id}
+                    </p>
+                    <p className="text-sm text-gray-800">
+                      No of Tickets: {bookingInfo.quantity}
+                    </p>
+                    <p className="text-sm text-gray-800">
+                      Tickets: {bookingInfo.tickets_id}
+                    </p>
+                    <p className="text-sm text-gray-800">Status: Confirmed</p>
                   </div>
                 </div>
 
-                {/* Total Amount */}
-                <div className="bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-xl border border-green-200">
+                {/* Confirmation message */}
+                <div className="text-center mb-6 px-2">
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    A confirmation is sent on e-mail/SMS/WhatsApp within 15
+                    minutes of booking.
+                  </p>
+                </div>
+
+                {/* Total amount */}
+                <div className="border-t border-gray-200 border-dashed pt-3 mb-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600 font-medium">
-                      Total Paid
+                    <span className="text-sm text-gray-800 font-medium">
+                      Total Amount
                     </span>
-                    <span className="text-2xl font-bold text-green-600">
+                    <div>
+                      <span className="text-base font-semibold text-gray-800">
                       ₹{event.numericPrice * bookingInfo.quantity}
-                    </span>
+                      </span>
+                    </div>
                   </div>
                 </div>
+
+                {/* Close button */}
                 <button
                   onClick={() => setShowTicketModal(false)}
-                  className="w-full p-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-colors"
+                  className="w-full p-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-colors"
                 >
                   Close Ticket
                 </button>
               </div>
-
-              {/* Close Button */}
             </motion.div>
           </div>
         )}

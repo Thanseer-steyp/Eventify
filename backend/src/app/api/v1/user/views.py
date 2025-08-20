@@ -3,7 +3,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework import status,generics
 from django.contrib.auth.models import User
-from general.models import Event, Booking
+from django.db import models
+from general.models import Event, Booking,Ticket
 from .serializers import TicketSerializer, UserProfileSerializer
 from api.v1.public.serializers import EventSerializer
 
@@ -22,15 +23,40 @@ class BookTicketView(APIView):
 
     def post(self, request):
         event_id = request.data.get("event")
-        quantity = request.data.get("quantity")
+        quantity = int(request.data.get("quantity", 1))
+
         try:
             event = Event.objects.get(pk=event_id)
         except Event.DoesNotExist:
             return Response({"error": "Event not found"}, status=404)
 
-        ticket = Booking.objects.create(user=request.user, event=event, quantity=quantity)
-        serializer = TicketSerializer(ticket)
+        # Check availability
+        tickets_sold = Booking.objects.filter(event=event).aggregate(total=models.Sum("quantity"))["total"] or 0
+        if tickets_sold + quantity > event.max_attendees:
+            return Response(
+                {"error": f"Only {event.max_attendees - tickets_sold} tickets are available"},
+                status=400
+            )
+
+        # Create booking
+        booking = Booking.objects.create(user=request.user, event=event, quantity=quantity)
+
+        # Find last ticket number for this event
+        last_ticket_number = Ticket.objects.filter(event=event).aggregate(models.Max("ticket_number"))["ticket_number__max"] or 0
+
+        # Create individual tickets
+        tickets = []
+        for i in range(1, quantity + 1):
+            ticket = Ticket.objects.create(
+                booking=booking,
+                event=event,
+                ticket_number=last_ticket_number + i
+            )
+            tickets.append(ticket)
+
+        serializer = TicketSerializer(booking)
         return Response(serializer.data, status=201)
+
 
 
 class AllUserDataView(APIView):
