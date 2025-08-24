@@ -3,10 +3,10 @@ from .views import CreateEventView, BookTicketView, AllUserDataView, UserProfile
 
 
 urlpatterns = [
-    path('events/create/', CreateEventView.as_view()),
-    path('tickets/book/', BookTicketView.as_view()),
+    path('create-event/', CreateEventView.as_view()),
+    path('book-tickets/', BookTicketView.as_view()),
     path('all-user-data/', AllUserDataView.as_view()),
     path('user-profile/', UserProfileView.as_view()),
-    path('booking/cancel/<int:booking_id>/', CancelBookingView.as_view()),
-    path('events/edit/<int:id>/', EditEventView.as_view()),
+    path('cancel-booking/<int:booking_id>/', CancelBookingView.as_view()),
+    path('edit-event/<int:id>/', EditEventView.as_view()),
 ]

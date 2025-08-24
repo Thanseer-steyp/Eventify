@@ -343,6 +343,13 @@ function EditEventModal({ event, onClose, onSave }) {
   const handleSave = async (e) => {
     e.preventDefault();
 
+    if (Number(formData.maxAttendees) < Number(event.tickets_left)) {
+      toast.warning(
+        `You cannot set maximum attendees (${formData.maxAttendees}) less than the already booked tickets (${event.tickets_left}).`
+      );
+      return; // Stop form submission
+    }
+
     const requiredFields = [
       "title",
       "description",
@@ -388,7 +395,7 @@ function EditEventModal({ event, onClose, onSave }) {
 
     try {
       const res = await axios.put(
-        `http://localhost:8000/api/v1/public/events/update/${event?.id}/`,
+        `http://localhost:8000/api/v1/user/edit-event/${event?.id}/`,
         data,
         {
           headers: {
@@ -400,11 +407,11 @@ function EditEventModal({ event, onClose, onSave }) {
 
       onSave(res.data);
       onClose();
-      toast.success("Event updated successfully!");
+      toast.success("Event edited successfully!");
     } catch (err) {
       console.error("Error updating event:", err.response?.data || err.message);
       toast.error(
-        "Failed to update event. Please check all fields and try again."
+        "Failed to edit event. Please check all fields and try again."
       );
     }
   };
@@ -685,8 +692,6 @@ function UserDashboard() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
   const [token, setToken] = useState(null);
-  const [showTicketModal, setShowTicketModal] = useState(false);
-  const [selectedBooking, setSelectedBooking] = useState(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -720,11 +725,6 @@ function UserDashboard() {
     localStorage.clear(); // clear tokens, user info
     window.dispatchEvent(new Event("login-status-changed")); // tell Header to reload user
     window.location.reload();
-  };
-
-  const handleBookingClick = (booking) => {
-    setSelectedBooking(booking);
-    setShowTicketModal(true);
   };
 
   useEffect(() => {
@@ -904,7 +904,7 @@ function UserDashboard() {
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex space-x-2 mb-8">
+        <div className="flex space-x-6 mb-8">
           <button
             onClick={() => setActiveTab("bookings")}
             className={`relative px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
@@ -969,7 +969,7 @@ function UserDashboard() {
         </div>
 
         {/* Content Section */}
-        <div className="min-h-[400px]">
+        <div className="min-h-[60vh]">
           {activeTab === "bookings" ? (
             bookings.length === 0 ? (
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
@@ -1020,7 +1020,6 @@ function UserDashboard() {
                   <div
                     key={booking.id}
                     className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-300 cursor-pointer"
-                    onClick={() => handleBookingClick(booking)} // Add this click handler
                   >
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex-1">
@@ -1126,7 +1125,7 @@ function UserDashboard() {
                               <path d="M13 17v2" />
                               <path d="M13 11v2" />
                             </svg>
-                            <span>Tickets ID: {booking.tickets_id}</span>
+                            <span>Tickets: {booking.tickets_id}</span>
                           </div>
                         </div>
                       </div>
@@ -1169,7 +1168,7 @@ function UserDashboard() {
                             const token = localStorage.getItem("access");
                             try {
                               await axios.delete(
-                                `http://localhost:8000/api/v1/user/booking/cancel/${booking.id}/`,
+                                `http://localhost:8000/api/v1/user/cancel-booking/${booking.id}/`,
                                 {
                                   headers: { Authorization: `Bearer ${token}` },
                                 }
@@ -1179,7 +1178,9 @@ function UserDashboard() {
                               );
                               toast.success("Your booking has been cancelled.");
                             } catch (err) {
-                              toast.error("Error cancelling booking");
+                              toast.error(
+                                "Failed to cancel booking. Try again after some time."
+                              );
                             }
                           }
                         }}
@@ -1471,217 +1472,6 @@ function UserDashboard() {
           )}
         </div>
 
-        {showTicketModal && selectedBooking && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-            <motion.div
-              initial={{ scale: 0, opacity: 0, rotateY: 90 }}
-              animate={{ scale: 1, opacity: 1, rotateY: 0 }}
-              exit={{ scale: 0, opacity: 0, rotateY: 90 }}
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              className="bg-white rounded-3xl w-[35%] shadow-2xl overflow-hidden flex flex-col"
-            >
-              {/* Ticket Header */}
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 text-white relative">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="text-2xl font-bold mb-1">Event Ticket</h2>
-                    <p className="text-blue-100 text-sm">Digital Pass</p>
-                  </div>
-                  <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                    <svg
-                      width="32"
-                      height="32"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M9 12l2 2 4-4M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"
-                        stroke="green"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-              {/* Ticket Content */}
-              <div className="p-3 space-y-3 flex-1">
-                {/* Event Title */}
-                <div className="text-center border-b border-gray-100 pb-3">
-                  <h3 className="text-xl font-bold text-gray-800">
-                    {selectedBooking.event_title}
-                  </h3>
-                  <p className="text-gray-500">
-                    {selectedBooking.location || "Event Location"}
-                  </p>
-                </div>
-
-                {/* Ticket Details Grid */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid grid-rows-3 gap-4">
-                    <div className="bg-gray-100 p-3 rounded-xl">
-                      <p className="text-xs text-gray-500 mb-1">Booking ID</p>
-                      <p className="font-bold text-gray-800">
-                        #{selectedBooking.id}
-                      </p>
-                    </div>
-                    <div className="bg-gray-100 p-3 rounded-xl">
-                      <p className="text-xs text-gray-500 mb-1">Date</p>
-                      <p className="font-bold text-gray-800">
-                        {new Date(
-                          selectedBooking.event_date
-                        ).toLocaleDateString("en-GB", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        })}
-                      </p>
-                    </div>
-                    <div className="bg-gray-100 p-3 rounded-xl">
-                      <p className="text-xs text-gray-500 mb-1">Booked On</p>
-                      <p className="font-bold text-gray-800">
-                        {new Date(selectedBooking.booked_at).toLocaleDateString(
-                          "en-US",
-                          {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          }
-                        )}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* QR Code and Quantity */}
-                  <div className="grid grid-rows-3 gap-4">
-                    <div className="bg-gray-100 p-3 rounded-xl row-span-1">
-                      <p className="text-xs text-gray-500 mb-1">Quantity</p>
-                      <p className="font-bold text-gray-800">
-                        {selectedBooking.quantity} Tickets
-                      </p>
-                    </div>
-                    <div className="bg-gray-100 p-6 rounded-xl text-center row-span-2">
-                      <div className="w-24 h-24 bg-gray-300 rounded-lg mx-auto flex items-center justify-center">
-                        <svg
-                          width="48"
-                          height="48"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <rect
-                            x="3"
-                            y="3"
-                            width="8"
-                            height="8"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          />
-                          <rect
-                            x="13"
-                            y="3"
-                            width="8"
-                            height="8"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          />
-                          <rect
-                            x="3"
-                            y="13"
-                            width="8"
-                            height="8"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          />
-                          <rect
-                            x="13"
-                            y="13"
-                            width="2"
-                            height="2"
-                            fill="currentColor"
-                          />
-                          <rect
-                            x="16"
-                            y="13"
-                            width="2"
-                            height="2"
-                            fill="currentColor"
-                          />
-                          <rect
-                            x="19"
-                            y="13"
-                            width="2"
-                            height="2"
-                            fill="currentColor"
-                          />
-                          <rect
-                            x="13"
-                            y="16"
-                            width="2"
-                            height="2"
-                            fill="currentColor"
-                          />
-                          <rect
-                            x="19"
-                            y="16"
-                            width="2"
-                            height="2"
-                            fill="currentColor"
-                          />
-                          <rect
-                            x="13"
-                            y="19"
-                            width="2"
-                            height="2"
-                            fill="currentColor"
-                          />
-                          <rect
-                            x="16"
-                            y="19"
-                            width="2"
-                            height="2"
-                            fill="currentColor"
-                          />
-                          <rect
-                            x="19"
-                            y="19"
-                            width="2"
-                            height="2"
-                            fill="currentColor"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Total Amount */}
-                <div className="bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-xl border border-green-200">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600 font-medium">
-                      Booking Status
-                    </span>
-                    <span className="text-2xl font-bold text-green-600">
-                      Confirmed
-                    </span>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setShowTicketModal(false)}
-                  className="w-full p-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-colors"
-                >
-                  Close Ticket
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-
         {/* Modals */}
         {showLoginModal && (
           <LoginWarningModal onClose={() => setShowLoginModal(false)} />
@@ -1701,19 +1491,7 @@ function UserDashboard() {
           />
         )}
 
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-          toastClassName="rounded-xl"
-        />
+        <ToastContainer position="top-right" autoClose={3000} />
       </div>
     </div>
   );

@@ -11,13 +11,14 @@ class SingleTicketSerializer(serializers.ModelSerializer):
         fields = ['ticket_number']
 
 
-class TicketSerializer(serializers.ModelSerializer):
+class BookingSerializer(serializers.ModelSerializer):
     event_title = serializers.CharField(source='event.title', read_only=True)
     event_date = serializers.DateField(source='event.date', read_only=True)
     event_time = serializers.TimeField(source='event.time', read_only=True)
     event_location = serializers.CharField(source='event.location', read_only=True)
     total_payment = serializers.SerializerMethodField()
     tickets_id = serializers.SerializerMethodField()
+    id = serializers.SerializerMethodField()
 
     class Meta:
         model = Booking
@@ -32,18 +33,23 @@ class TicketSerializer(serializers.ModelSerializer):
 
     def get_tickets_id(self, obj):
         # Take first letter of event title for prefix
-        event_prefix = obj.event.title[0].upper() if obj.event.title else "T"
+        event_prefix = obj.event.title[0].upper() if obj.event.title else "E"
 
         # Create formatted ticket IDs: e.g. #M1, #M2, #M3
         tickets = [f"{event_prefix}{ticket.ticket_number}" for ticket in obj.tickets.all()]
         return ", ".join(tickets)
+
+    def get_id(self, obj):
+        # First letter of event title + booking ID
+        first_letter = obj.event.title[0].upper() if obj.event.title else "E"
+        return f"BK{first_letter}{obj.id}"
 
 
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(read_only=True)
-    bookings = TicketSerializer(source='tickets', many=True, read_only=True)
+    bookings = BookingSerializer(source='tickets', many=True, read_only=True)
     created_events = EventSerializer(source='events', many=True, read_only=True)
 
     class Meta:

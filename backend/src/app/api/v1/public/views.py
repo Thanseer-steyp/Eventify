@@ -28,11 +28,3 @@ class EventDetailView(RetrieveAPIView):
     serializer_class = EventSerializer
 
 
-class EventUpdateView(RetrieveUpdateAPIView):
-    queryset = Event.objects.all()
-    serializer_class = EventSerializer
-    permission_classes = [IsAuthenticated]  # only logged-in users can edit
-
-    def get_queryset(self):
-        # Only allow the organizer to update their own events
-        return Event.objects.filter(user=self.request.user)

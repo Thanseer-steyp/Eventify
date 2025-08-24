@@ -287,7 +287,7 @@ const EventPage = () => {
 
         <div className="p-3 space-y-1.5">
           <h3
-            className={`text-lg font-semibold mb-3 ${
+            className={`text-lg font-semibold mb-3 min-h-[56px] ${
               isPast ? "text-gray-400" : "text-black"
             }`}
           >

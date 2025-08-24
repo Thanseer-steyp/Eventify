@@ -5,7 +5,7 @@ from rest_framework import status,generics
 from django.contrib.auth.models import User
 from django.db import models
 from general.models import Event, Booking,Ticket
-from .serializers import TicketSerializer, UserProfileSerializer
+from .serializers import BookingSerializer, UserProfileSerializer
 from api.v1.public.serializers import EventSerializer
 
 class CreateEventView(APIView):
@@ -54,7 +54,7 @@ class BookTicketView(APIView):
             )
             tickets.append(ticket)
 
-        serializer = TicketSerializer(booking)
+        serializer = BookingSerializer(booking)
         return Response(serializer.data, status=201)
 
 

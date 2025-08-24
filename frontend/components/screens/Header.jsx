@@ -43,6 +43,19 @@ function Header() {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
+  const parseEventDate = (dateStr) => {
+    if (!dateStr) return new Date();
+
+    // Backend sends dates in yyyy-mm-dd format
+    if (dateStr.includes("-")) {
+      const [year, month, day] = dateStr.split("-");
+      return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    }
+
+    // Fallback for other formats
+    return new Date(dateStr);
+  };
+
   const fetchSuggestions = async (query) => {
     try {
       const res = await axios.get(
@@ -51,8 +64,32 @@ function Header() {
           params: { q: query },
         }
       );
-      setSuggestions(res.data.slice(0, 5));
-      setShowSuggestions(true);
+
+      
+
+      // Filter out past events on the frontend
+      const upcomingEvents = res.data.filter((event) => {
+        const eventDate = parseEventDate(event.date || event.event_date);
+        const timeField = event.time || event.event_time;
+        const now = new Date();
+
+        if (timeField) {
+          const [rawTime, modifier] = timeField.toString().split(" ");
+          let [hours, minutes] = rawTime.split(":").map(Number);
+          if (modifier?.toLowerCase() === "pm" && hours < 12) hours += 12;
+          if (modifier?.toLowerCase() === "am" && hours === 12) hours = 0;
+          eventDate.setHours(hours, minutes, 0, 0);
+        } else {
+          eventDate.setHours(23, 59, 59, 999);
+        }
+
+        // Only include upcoming events
+        return now <= eventDate;
+      });
+
+
+      setSuggestions(upcomingEvents.slice(0, 5));
+      setShowSuggestions(upcomingEvents.length > 0);
     } catch (err) {
       setSuggestions([]);
       setShowSuggestions(false);
