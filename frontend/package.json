@@ -17,6 +17,7 @@
     "react-date-range": "^2.0.1",
     "react-dom": "19.1.0",
     "react-slick": "^0.30.3",
+    "react-spinners": "^0.17.0",
     "react-time-picker": "^7.0.0",
     "react-toastify": "^11.0.5",
     "slick-carousel": "^1.8.1",

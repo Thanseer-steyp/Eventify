@@ -1017,120 +1017,118 @@ function UserDashboard() {
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {bookings.map((booking) => (
-                  <div
-                    key={booking.id}
-                    className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-300 cursor-pointer"
-                  >
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex-1">
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">
-                          {booking.event_title}
-                        </h3>
-                        <div className="space-y-2 text-sm text-gray-600">
-                          <div className="flex items-center space-x-2">
-                            <svg
-                              className="w-4 h-4 text-gray-400"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                              />
-                            </svg>
+                  <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-300" key={booking.id}>
+                    <Link href={`/booking/${booking.custom_id}`}>
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="flex-1">
+                          <h3 className="text-xl font-bold text-gray-900 mb-2">
+                            {booking.event_title}
+                          </h3>
+                          <div className="space-y-2 text-sm text-gray-600">
+                            <div className="flex items-center space-x-2">
+                              <svg
+                                className="w-4 h-4 text-gray-400"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                />
+                              </svg>
 
-                            <span>
-                              {(() => {
-                                const date = new Date(booking.event_date);
-                                const dd = date.toLocaleDateString("en-GB", {
-                                  day: "2-digit",
-                                });
-                                const month = months[date.getMonth()];
-                                const yyyy = date.getFullYear();
+                              <span>
+                                {(() => {
+                                  const date = new Date(booking.event_date);
+                                  const dd = date.toLocaleDateString("en-GB", {
+                                    day: "2-digit",
+                                  });
+                                  const month = months[date.getMonth()];
+                                  const yyyy = date.getFullYear();
 
-                                // Convert event.time (e.g., "17:00:00") into 12-hour format
-                                let timeString = "";
-                                if (booking.event_time) {
-                                  const [hours, minutes] =
-                                    booking.event_time.split(":");
-                                  const dateTime = new Date();
-                                  dateTime.setHours(hours, minutes);
-                                  timeString = dateTime.toLocaleTimeString(
-                                    "en-US",
-                                    {
-                                      hour: "numeric",
-                                      minute: "2-digit",
-                                      hour12: true,
-                                    }
-                                  );
-                                }
+                                  // Convert event.time (e.g., "17:00:00") into 12-hour format
+                                  let timeString = "";
+                                  if (booking.event_time) {
+                                    const [hours, minutes] =
+                                      booking.event_time.split(":");
+                                    const dateTime = new Date();
+                                    dateTime.setHours(hours, minutes);
+                                    timeString = dateTime.toLocaleTimeString(
+                                      "en-US",
+                                      {
+                                        hour: "numeric",
+                                        minute: "2-digit",
+                                        hour12: true,
+                                      }
+                                    );
+                                  }
 
-                                return `${dd} ${month} ${yyyy} • ${timeString}`;
-                              })()}
-                            </span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <svg
-                              className="w-4 h-4 text-gray-400"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                              />
-                            </svg>
-                            <span>Booking ID: #{booking.id}</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="16"
-                              height="16"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="#99a1af"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              class="lucide lucide-ticket-check-icon lucide-ticket-check"
-                            >
-                              <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
-                              <path d="m9 12 2 2 4-4" />
-                            </svg>
-                            <span>{booking.quantity} Tickets</span>
-                          </div>
+                                  return `${dd} ${month} ${yyyy} • ${timeString}`;
+                                })()}
+                              </span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <svg
+                                className="w-4 h-4 text-gray-400"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                />
+                              </svg>
+                              <span>Booking ID: #{booking.custom_id}</span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="#99a1af"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="lucide lucide-ticket-check-icon lucide-ticket-check"
+                              >
+                                <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+                                <path d="m9 12 2 2 4-4" />
+                              </svg>
+                              <span>{booking.quantity} Tickets</span>
+                            </div>
 
-                          <div className="flex items-center space-x-2">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="16"
-                              height="16"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="#99a1af"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              class="lucide lucide-ticket-icon lucide-ticket"
-                            >
-                              <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
-                              <path d="M13 5v2" />
-                              <path d="M13 17v2" />
-                              <path d="M13 11v2" />
-                            </svg>
-                            <span>Tickets: {booking.tickets_id}</span>
+                            <div className="flex items-center space-x-2">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="#99a1af"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="lucide lucide-ticket-icon lucide-ticket"
+                              >
+                                <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+                                <path d="M13 5v2" />
+                                <path d="M13 17v2" />
+                                <path d="M13 11v2" />
+                              </svg>
+                              <span>Tickets: {booking.tickets_id}</span>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-
+                    </Link>
                     <div className="border-t border-gray-100 pt-4 mt-4 flex justify-between items-center">
                       <div className="text-xs text-gray-500">
                         Booked:{" "}

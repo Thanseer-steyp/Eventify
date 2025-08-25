@@ -919,50 +919,7 @@ const EventDetailPage = () => {
           </div>
         )}
 
-        {/* {isLoading && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 backdrop-blur-sm">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="bg-white rounded-2xl p-8 w-[25%] shadow-2xl border border-gray-100 overflow-y-auto"
-            >
-              <div className="flex flex-col items-center space-y-4">
-                <div className="relative">
-                  <div className="w-16 h-16 border-4 border-blue-200 rounded-full animate-spin border-t-blue-600"></div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <svg
-                      className="w-6 h-6 text-blue-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
-                      />
-                    </svg>
-                  </div>
-                </div>
-                
-                <div className="text-center">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                    Processing Payment
-                  </h3>
-                  <motion.div
-                    animate={{ opacity: [1, 0.5, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="text-sm text-gray-500"
-                  >
-                    Please wait while we confirm your booking...
-                  </motion.div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        )} */}
-
+        
         {/* Ticket Display Modal */}
         {showTicketModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 backdrop-blur-xl">
@@ -1048,7 +1005,7 @@ const EventDetailPage = () => {
                   {/* Booking Info */}
                   <div className="flex-1 space-y-1.5">
                     <p className="text-sm text-gray-800 font-medium">
-                      BOOKING ID: #{bookingInfo.id}
+                      BOOKING ID: #{bookingInfo.custom_id}
                     </p>
                     <p className="text-sm text-gray-800">
                       No of Tickets: {bookingInfo.quantity}
@@ -1072,11 +1029,11 @@ const EventDetailPage = () => {
                 <div className="border-t border-gray-200 border-dashed pt-3 mb-4">
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-800 font-medium">
-                      Total Amount
+                      Amount Paid
                     </span>
                     <div>
                       <span className="text-base font-semibold text-gray-800">
-                        ₹{event.numericPrice * bookingInfo.quantity}
+                        ₹{bookingInfo.total_payement}
                       </span>
                     </div>
                   </div>
