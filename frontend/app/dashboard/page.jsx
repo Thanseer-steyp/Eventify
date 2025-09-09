@@ -1116,13 +1116,13 @@ function UserDashboard() {
 
                       {/* QR Code Section */}
                       <div className="ml-4 flex-shrink-0">
-                        <div className="bg-gray-50 rounded-xl p-2 border border-gray-200 text-center">
+                        <div className="bg-gray-50 rounded-xl p-1.5 border border-gray-200 text-center">
                           <img
                             src={booking.qr_code}
                             alt="Booking QR Code"
                             className="w-30 h-30 object-contain mx-auto mb-2"
                           />
-                          <p className="text-xs text-gray-500 font-medium">
+                          <p className="text-[11px] text-gray-500 font-medium">
                             Scan QR to get details
                           </p>
                         </div>

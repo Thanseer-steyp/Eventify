@@ -1,8 +1,8 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import Header from "@/components/screens/Header";
-import Footer from "@/components/screens/Footer";
+import Header from "@/components/screens/general/Header";
+import Footer from "@/components/screens/general/Footer";
 
 export default function HeaderFooterWrapper({ children }) {
   const pathname = usePathname();

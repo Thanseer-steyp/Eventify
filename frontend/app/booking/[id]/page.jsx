@@ -157,7 +157,7 @@ function BookingDetail() {
               </div>
             </div>
           </div>
-          <div className="text-xs my-3 text-center text-gray-500 border border-gray-300 p-1.5 border-dashed">
+          <div className="text-xs my-3 text-center text-gray-500 border border-gray-300 p-1.75 border-dashed">
             Booked at:{" "}
             {new Date(booking.booked_at).toLocaleDateString("en-US", {
               year: "numeric",

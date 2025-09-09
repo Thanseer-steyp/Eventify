@@ -1,8 +1,8 @@
 "use client";
-import LoopCarousel from "../../components/screens/LoopCarousel";
-import Stats from "../../components/screens/Stats";
-import Feature from "../../components/screens/Feature";
-import FeedbackCarousel from "../../components/screens/FeedbackCarousel";
+import LoopCarousel from "../../components/screens/home/LoopCarousel";
+import Stats from "../../components/screens/home/Stats";
+import Feature from "../../components/screens/home/Feature";
+import FeedbackCarousel from "../../components/screens/home/FeedbackCarousel";
 
 
 function Home() {
