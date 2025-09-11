@@ -25,18 +25,16 @@ const EventCard = ({ event, index, isEventPast }) => {
         isPast ? "cursor-not-allowed opacity-80" : "cursor-pointer"
       }`}
     >
-      <div className="w-full block h-[150px] relative">
+      <div className="w-full block relative">
         {isPast && (
           <div className="absolute top-2 left-2 bg-red-600 px-3 py-1 rounded-full text-xs font-medium z-10">
             Ended
           </div>
         )}
-        <Image
+        <img
           src={event.image}
           alt={event.title}
-          className="w-full h-full"
-          width={150}
-          height={150}
+          className="w-full h-[200px] md:h-[260px] lg:h-[200px]"
         />
       </div>
 

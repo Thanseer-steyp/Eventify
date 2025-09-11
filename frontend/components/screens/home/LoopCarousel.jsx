@@ -70,12 +70,12 @@ function LoopCarousel() {
             {/* 🔻 Slide Content */}
             <div className="absolute inset-0 bg-black/40 flex items-center justify-start px-10">
               <div className="wrapper text-white flex flex-col gap-6 items-start py-52">
-                <h1 className="text-7xl font-semibold text-white w-[730px] transition duration-400 hover:scale-105">
+                <h1 className="text-4xl sm:text-5xl lg:text-7xl text-center md:text-left font-semibold text-white xl:w-[730px] transition duration-400 hover:scale-105">
                   {image.heading}
                 </h1>
                 <Link
                   href={image.buttonLink}
-                  className="bg-yellow-400 px-5 py-3 rounded-lg font-bold tracking-wider text-[#131d30] w-max transition duration-400 hover:scale-105"
+                  className="bg-yellow-400 px-5 py-3 mx-auto md:mx-0 rounded-lg font-bold tracking-wider text-[#131d30] w-max transition duration-400 hover:scale-105"
                 >
                   {image.buttonText}
                 </Link>

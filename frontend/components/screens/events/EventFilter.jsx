@@ -24,7 +24,7 @@ const EventFilter = ({
 }) => {
   return (
     <div className="wrapper py-[150px]">
-      <h2 className="text-[55px] text-center font-semibold mb-5">
+      <h2 className="text-4xl md:text-5xl text-center font-semibold mb-5 leading-tight">
         FIND AN EVENT & BUY TICKETS
       </h2>
 
@@ -42,7 +42,7 @@ const EventFilter = ({
       </div>
 
       {/* Date / Location / Price */}
-      <div className="grid grid-cols-3 gap-5">
+      <div className="grid md:grid-cols-3 gap-5">
         {/* Date filter */}
         <div className="relative" ref={calendarRef}>
           <label className="block font-medium text-sm mb-1 text-center">
@@ -138,7 +138,7 @@ const EventFilter = ({
       </div>
 
       {/* Buttons */}
-      <div className="flex justify-center gap-3 mt-4">
+      <div className="flex justify-center gap-4 mt-5">
         <button
           onClick={filtersApplied ? handleClearFilters : handleFilter}
           className={`px-5 py-2 rounded-md font-semibold cursor-pointer transition 

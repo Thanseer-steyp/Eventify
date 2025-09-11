@@ -190,17 +190,19 @@ const EventPage = () => {
             calendarRef={calendarRef}
             filtersApplied={filtersApplied}
           />
-          <div className="w-full bg-white bg-[url('/bg-extend.png')] h-16 bg-no-repeat bg-cover"></div>
+          <div className="w-full hidden lg:block">
+            <img src="bg-extend.png" alt="" className="block w-full" />
+          </div>
         </div>
 
         <div className="w-full bg-white">
           {filtersApplied && (
             <div className="wrapper py-10 border-b border-[#bebebe]">
-              <h2 className="text-[40px] text-center font-semibold text-[#01517f] mb-8">
+              <h2 className="text-4xl text-center font-semibold text-[#01517f] mb-8">
                 SEARCH RESULTS
               </h2>
 
-              <div className="grid grid-cols-4 gap-7">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-7">
                 {sortEventsByDateTime(filteredEvents).map((event, index) => (
                   <EventCard
                     event={event}
@@ -224,11 +226,11 @@ const EventPage = () => {
           )}
 
           <div className="wrapper py-10">
-            <h2 className="text-[40px] text-center font-semibold text-[#01517f] mb-8">
+            <h2 className="text-4xl text-center font-semibold text-[#01517f] mb-8">
               UPCOMING EVENTS
             </h2>
 
-            <div className="grid grid-cols-4 gap-7">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-7">
               {sortEventsByDateTime(
                 events.filter((event) => !isEventPast(event))
               ).map((event, index) => (
@@ -248,11 +250,11 @@ const EventPage = () => {
           </div>
           {showPastEvents && (
             <div className="wrapper py-10 border-t border-[#bebebe]">
-              <h2 className="text-[40px] text-center font-semibold text-[#01517f] mb-8">
+              <h2 className="text-4xl text-center font-semibold text-[#01517f] mb-8">
                 PAST EVENTS
               </h2>
 
-              <div className="grid grid-cols-4 gap-7">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-7">
                 {sortEventsByDateTime(
                   events.filter((event) => isEventPast(event))
                 ).map((event, index) => (
