@@ -6,7 +6,11 @@ SECRET_KEY = 'django-insecure-bt_-l(r5dpe^c60=jak5mo9r-&sbcq$if^k7ase18(q&e#ycv#
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "eventify-ia2k.onrender.com",
+    "localhost",
+    "127.0.0.1"
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -112,4 +116,7 @@ SIMPLE_JWT = {
     
     'REFRESH_TOKEN_LIFETIME': timedelta(days=100),
 }
+
+
+
 
