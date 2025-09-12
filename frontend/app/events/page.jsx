@@ -115,26 +115,50 @@ const EventPage = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const fetchEvents = async () => {
-    try {
-      const res = await axios.get(
-        "http://localhost:8000/api/v1/public/events/"
-      );
-      const data = res.data;
+  //const fetchEvents = async () => {
+    //try {
+      //const res = await axios.get(
+        //"http://localhost:8000/api/v1/public/events/"
+      //);
+      //const data = res.data;
 
-      return data.map((event) => {
-        const numericPrice = Math.floor(Number(event.price));
-        return {
-          ...event,
-          numericPrice,
-          price: numericPrice === 0 ? "Free" : `₹${numericPrice}`,
-        };
-      });
-    } catch (error) {
-      console.error("Error fetching events:", error);
-      return [];
-    }
-  };
+      //return data.map((event) => {
+        //const numericPrice = Math.floor(Number(event.price));
+        //return {
+          //...event,
+          //numericPrice,
+          //price: numericPrice === 0 ? "Free" : `₹${numericPrice}`,
+        //};
+      //});
+    //} catch (error) {
+      //console.error("Error fetching events:", error);
+      //return [];
+    //}
+  //};
+
+  const fetchEvents = async () => {
+  try {
+    // Use environment variable, fallback to localhost for dev
+    const baseURL =
+      process.env.REACT_APP_API_URL || "http://localhost:8000";
+
+    const res = await axios.get(`${baseURL}/api/v1/public/events/`);
+    const data = res.data;
+
+    return data.map((event) => {
+      const numericPrice = Math.floor(Number(event.price));
+      return {
+        ...event,
+        numericPrice,
+        price: numericPrice === 0 ? "Free" : `₹${numericPrice}`,
+      };
+    });
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    return [];
+  }
+};
+
 
   useEffect(() => {
     const loadEvents = async () => {
