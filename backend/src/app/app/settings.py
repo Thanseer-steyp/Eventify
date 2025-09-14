@@ -6,11 +6,7 @@ SECRET_KEY = 'django-insecure-bt_-l(r5dpe^c60=jak5mo9r-&sbcq$if^k7ase18(q&e#ycv#
 
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    "eventify-ia2k.onrender.com",
-    "localhost",
-    "127.0.0.1"
-]
+ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -94,10 +90,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-CORS_ALLOWED_ORIGINS = [
-    "https://eventify-frontend.vercel.app",  # 👈 your Vercel frontend URL
-    "http://localhost:3000",                 # 👈 for local React dev
-]
+CORS_ALLOW_ALL_ORIGINS = True
 
 
 REST_FRAMEWORK = {
